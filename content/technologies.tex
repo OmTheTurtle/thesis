@@ -1,0 +1,86 @@
+\chapter{Használt technológiák kiválasztása}
+
+%----------------------------------------------------------------------------
+\section{Frontend}
+%----------------------------------------------------------------------------
+\subsection{JavaScript keretrendszer}
+A frontendhez használt technológia kiválasztásánál két fő szempontot tudunk megkülönböztetni.
+Az egyik az egyes backend rendszerek által támogatott, szerveroldalon renderlet, template engine-t használó megoldás, a másik a külön frontend framework használata.
+Utóbbi jóval nagyobb szabadságot és funkcionalitást ad a fejlesztő kezébe, és lehetőséget ad a legújabb technikák és könyvtárak használatára.
+Emiatt úgy döntöttem, hogy az alkalmazás ezen részét a négy legnépszerűbb keretrendszer (React, Angular, Vue és Svelte) egyikével fogom megvalósítani.
+Ezek a keretrendszerek alapvető filozófiában és funkcionalitásban lényegében megyegyeznek, azonban az elérhető 3rd party könyvtárak mennyisége és minősége a React esetében a legnagyobb, emiatt végső soron erre esett a választásom.
+
+\subsection{CSS keretrendszer}
+A CSS keretrendszer kiválasztása során két fő irányvonal jött szóba: az ún. atomic CSS, illetve az előre már elkészített komponenseket kínáló könyvtárak.
+Míg előbbi lehetővé teszi a teljesen egyedi design írását, utóbbi jóval nagyobb fokú kényelmet és a felület gyorsabb elkészítését teszi lehetővé.
+Mivel jelen alkalmazás esetében nem volt szempont egy egyedi design elkészítése, ezért az utóbbi megoldás használata mellett döntöttem.
+A kiválasztott framework végül a Chakra UI lett, mely nagy mennyiségű kész, egyszerűen bővíthető és magas fokú accessibility-t kínáló komponensekkel rendelkezik.
+
+%----------------------------------------------------------------------------
+\section{Backend}
+%----------------------------------------------------------------------------
+A backend keretrendszer kiválasztása során a legfontosabb szempont az volt, hogy minél jobban képes legyen integrálódni a frontend keretrendszerhez.
+Mindenképpen szerettem volna elkerülni a külön repository használtatát. Ennek fő okai, hogy mind a fejlesztés, mind a deployment jelentősen egyszerűsödik.
+A fentiek miatt a lehetőségeim a NodeJS alapú megoldásokra szűkítettem le. Egy népszerű, és általam már kipróbált megoldás az Express keretrendszer, azonban a React világában létezik egy, az igényeimnek méginkább megfelelő framework: a NextJS.
+Ez egy React-ra épülő, SSR-t (TODO: lábjegyzet) támogató keretrendszer, amely rendelkezik egy ún. API routes nevű funkcióval.
+Ennek segítségével a React alkalmazásunkon belül készíthető egy API réteg, amely a fordítás után szerveroldalon futó függvényekké lesz átalakítva.
+Ezzel lényegében megspóroljuk, hogy külön API-t és hozzávaló elérési, illetve deployment környezetet kelljen létrehozni, miközben egy Express-hez hasonló interfészt tudunk használni.
+Előnye továbbá, hogy rendkívül egyszerűvé teszi a frontend és a backend közötti kódmegosztást, csökkentve ezzel a duplikációkat és erősítve a type safety-t.
+
+%----------------------------------------------------------------------------
+\section{Adatbázis}
+%----------------------------------------------------------------------------
+Az adatbázis architektúra kiválasztása esetén két fő irányvonal volt a meghatározó: a hagyományos relációs adatbázis (pl. PostgreSQL, MySQL) és a NoSQL megoldások (pl. MongoDB, Google Firestore, AWS DynamoDB).
+A technológia kiválasztása során fontos szempont volt az ACID elvek követése, a relációk egyszerű kezelése és a minél nagyobb típusbiztosság elérése a backend kódjában.
+Ezeknek a szempontoknak a hagyományos relációs adatbázisok felelnek meg, ezen belül a PostgreSQL-re esett a választásom, mivel ez egy általam már ismert, sok funkciót támogató, inegyenes és nyílt forráskódú megoldás.
+
+%----------------------------------------------------------------------------
+\subsection{Az adatbázis elérése}
+%----------------------------------------------------------------------------
+Miután a backend és adatbázis technológiák és könyvtárak kiválasztásra kerültek, szükséges a kettő közötti kommunikációt biztosító könyvtár meghatározására.
+NodeJS környezetben rendkívül nagy választék áll rendelkezésre, ezeket két nagy csoportra lehet bontani: ORM és query builder.
+Míg az előbbi megoldás egy erős absztrakciós réteget képez az adatbázis szerkezete és a programkód között, addig a query builder egy, az SQL-hez közelebbi interfészt kínál a felhasználónak.
+Ez utóbbi előnye, hogy a felhasználó által írt kód közelebb van a végső soron lefutó SQL-hez, így átláthatóbbak az egyes lekérések végeredményei.
+A query builder megoldások közül is kiemelkedik a Prisma, amely egy NodeJS környezetben működő adatbázis kliens, ami a hansúlyt a type safety-re helyezi.
+Az adatbázis sémát egy speciális .prisma kiterjesztésű fájlban tudjuk megírni, majd ezt a Prisma migrációs eszközével tudjuk az adatbázisunkba átvezetni. (TODO: lábjegyzet hogy a migráció még csak experimental)
+Ezután lehetőségünk van a séma alapján a sémából TypeScript típusokat generálni, melyek használata nagyban megkönnyíti és felgyorsítja a fejlesztés menetét.
+
+\begin{lstlisting}[language=Java, caption=Adatbázis beillesztés TypeORM környezetben]
+const user = new User()
+user.firstName = "Bob"
+user.lastName = "Smith"
+user.age = 25
+await repository.save(user)
+\end{lstlisting}
+
+\begin{lstlisting}[language=Java, caption=Adatbázis beillesztés Prisma segítségével]
+const user = await prisma.user.create({
+  data: {
+    firstName: "Bob",
+    lastName: "Smith",
+    age: 25
+  }
+})
+\end{lstlisting}
+
+todo: táblázat
+
+                  ORM                     query builder
+paradigma         oop                  funkcionális programozás
+séma definíció  ts class+dekorátorok         változó
+adatelérés     példányosított            query interface, chain-elt függvények
+              objektumon keresztül
+
+
+
+
+\section{REST és GraphQL}
+Előnyök és hátrányok mindkét esetben, miért rest lett végül (egyszerű, zero-config, ismert, API routes-szal jól integrálódik)
+
+A fentieken túl utolsó lépésként szükséges volt eldönteni a frontend és a backend közötti kommunikáció lebonyolítását (TODO: ezt szebben).
+A REST architektúra mellett ugyanis megjelent a GraphQl, ami az eddigi lehetőségekhez képest egy flexibilisebb megoldást kínál az adatok elérésére.
+A két technológia előnyeit és hátrányait az alábbi táblázatban foglaltam össze.
+
+TODO: táblázat
+
+A fenti szempontokat figyelembe véve végül a hagyományos REST architektúra alkalmazása mellett döntöttem.
