@@ -1,0 +1,83 @@
+\section{A backend felépítése}
+
+\subsection{Next.js API routes}
+
+A Next.js keretrendszer a 9-es verzió óta lehetővé teszi szerveroldali kód írását az alkalmazásunkhoz.
+Ennek segítségével a pages/api mappába helyetett fájljaink szolgálnak backendként. Minden ide helyezett fájl
+egyben a nevének megfelelő API végpont lesz, tehát például a pages/api/books.ts-ben lévő kódot a pages/api/books URL-en keresztül tudjuk elérni.
+
+Támogatja továbbá a backend-oldali dinamikus routing-ot, azaz például a pages/api/books/[id].tsx fájl a pages/api/<id> URL-nek felel meg, ahol
+az id változót alábbi módon érhetjük el:
+
+\begin{lstlisting}[language=Java, caption=Next.js dinamikus routing]
+export default function handler(req, res) {
+  const {
+    query: { id },
+  } = req
+
+  res.end(`Book: ${id}`)
+}
+\end{lstlisting}
+
+\subsection{next-connect}
+Alapesetben a Next.js csak egy egyszerű interface-t biztosít nekünk, amin keresztül elérhetjük a HTTP kérés request és response objektumokat annak kezeléséhez.
+Ez azonban nezhézkessé teszi a különböző kérések feldolgozását (pl. GET, POST és PUT), valamint különbőző kódrészletek egyszerű újrafelhasználását.
+
+Ennek kényelmesebbé tételére döntöttem a next-connect könyvtár használata mellett, amellyel a fenti igények könnyedén megvalósíthatóak.
+Az alábbi két kódrészletben szeretném bemutatni a főbb különbségeket.
+
+\begin{lstlisting}[language=Java, caption=Default Next.js API routes]
+export default function handler(req: NextApiRequest, res: NextApiResponse) {
+  if (req.method === 'GET') {
+    res.statusCode = 200
+    res.setHeader('Content-Type', 'application/json')
+    res.end(JSON.stringify({ name: 'John Doe' }))
+  } else if (req.method === 'POST') {
+    // Process a POST request
+  }
+}
+\end{lstlisting}
+
+\begin{lstlisting}[language=Java, caption=Kérés kezelése next-connect segítségével]
+import nextConnect from "next-connect"
+
+const handler = nextConnect<NextApiRequest, NextApiResponse>()
+
+handler
+  .get((req, res) => {
+    res.json({ name: 'John Doe' })
+  })
+  .post((req, res) => {
+    // Process POST request
+  })
+
+export default handler
+\end{lstlisting}
+
+\subsubsection{Middleware támogatás}
+A Next.js alapesetben nem rendelkezik beépített middleware támogatással, emiatt bizonyos kódrészletek újrahasználása körülményes lehet.
+A next-connect azonban ezt a folyamatot rendkívül egyszerűvé teszi, így könnyen lehet védett útvonalakat létrehozni például csak bejelentkezett
+felhasználók számára.
+
+\begin{lstlisting}[language=Java, caption=Middleware kezelés next-connect segítségével]
+import nextConnect from "next-connect"
+import requireLogin from "middleware/requireLogin"
+import requireAdmin from "middleware/requireAdmin"
+const handler = nextConnect<NextApiRequest, NextApiResponse>()
+
+handler
+  .get((req, res) => {
+    res.json({ name: 'John Doe' })
+  })
+  .use(requreLogin)
+  .post((req, res) => {
+    // Process POST request
+  })
+  .use(requireAdmin)
+  // Process other requests
+
+export default handler
+\end{lstlisting}
+
+A fenti kódrészletben a POST kérés csak bejelentkezett felhasználók számára elérhető. Ezek egymás után is fűzhetőek, így komplex
+igények is rendkívül egyszerűen megvalósíthatóak.

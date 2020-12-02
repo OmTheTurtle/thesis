@@ -6,15 +6,40 @@ A bevezető tartalmazza a diplomaterv-kiírás elemzését, történelmi előzm�
 
 A bevezető szokás szerint a diplomaterv felépítésével záródik, azaz annak rövid leírásával, hogy melyik fejezet mivel foglalkozik.
 
-- létező könyvtár a simonyiban, meglévő megoldások: excel táblázat az adminisztrációra, email ha valaki kölcsönözne, manuális és szétszórt egyeztetési folyamat,
-amire más nem lát rá, körülményes adminisztráció a táblázatban, nem hozzáférhető a hallgatók számára
+A Simonyi Károly Szakkollégiumban jelenleg üzemel egy könyvtár, ahonnan a hallgatók különféle tankönyveket és szórakoztató irodalmat van lehetőségük kölcsönözni.
+Ennek az adminisztrációja egy megosztott Google Docs táblázaton keresztül történik, ami azonban a publikum felé nem nyilvános, a hallgatók a könyvtárban lévő könyvek elérhetőségét csak személyesen,
+vagy az üzemeltetőknek írt emailen keresztül tudják ellenőrizni. Ez nagyban hátráltatja, hogy a hallgatókban tudatosuljon a könyvtár létezése, valamint  megnehezíti annak karbantartását és a kölcsönzés menetét is.
 
-- megoldás összefoglalása: egy könnyen kezelhető webes felület, ami a könyvtárt használó hallgatónak és az azt adminisztráló szakkollégistának is egy egyszerű,
-könnyen hozzáférhető és bővíthető platformot biztosít
+Ezen helyzet adta a motivációt arra, hogy készítsek egy, a hallgatók által könnyen hozzáférhető, és az üzemeltetők által kényelmesen menedzselhető webes alkalmazást a szakkollégium számára.
+A cél egy reszponzív, web alapú felület tervezése és elkészítése a könyvtár könnyű használhatósága érdekében. (TODO: ezt talán szebben fogalmazni)
 
+TODO: szebben
 fejezetek:
-- tech stack kiválasztása
+- Használt technológiák kiválasztása
   - frontend, backend, db, rest/graphql
 - alkalmazás felépítése
+  - adatbázis
+    - db séma (dbdiagram export, prisma schema, prisma migrate)
+    - prisma (schema file, migrations)
+  - backend
+    - nextjs file-based routing, middleware-ek
+  - frontend
+    - components/ mappa, file based routing
+  - kódmegosztás
+    - lib/ mappa, prisma típusok frontenden
+- alkalmazás működése
+  - next connect
+  - authentikáció, authorizáció
+  - adatlekérés a backendtől: useSWR
+  - prisma
+  - keresés: postgres full text search, kihívások, megoldások
+  - fájlfeltöltés: amazon S3
+
+- tesztek (???)
+- CI
+  - github actions, eslint
 - hosting, jövőbeli deploy (kubernetes, docker)
 - jövőbeli bővítési lehetőségek
+  - real-time chat websocket segítségével
+  - hosted / dockerben futó fuzzy search (elastic, algolia)
+  - authsch integráció a user-pass mellé
