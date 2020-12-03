@@ -3,11 +3,11 @@
 \subsection{Next.js API routes}
 
 A Next.js keretrendszer a 9-es verzió óta lehetővé teszi szerveroldali kód írását az alkalmazásunkhoz.
-Ennek segítségével a pages/api mappába helyetett fájljaink szolgálnak backendként. Minden ide helyezett fájl
-egyben a nevének megfelelő API végpont lesz, tehát például a pages/api/books.ts-ben lévő kódot a pages/api/books URL-en keresztül tudjuk elérni.
+Ennek segítségével a \lstinline|pages/api| mappába helyetett fájljaink szolgálnak backendként. Minden ide helyezett fájl
+egyben a nevének megfelelő API végpont lesz, tehát például a \lstinline|pages/api/books.ts|-ben lévő kódot a pages/api/books URL-en keresztül tudjuk elérni.
 
-Támogatja továbbá a backend-oldali dinamikus routing-ot, azaz például a pages/api/books/[id].tsx fájl a pages/api/<id> URL-nek felel meg, ahol
-az id változót alábbi módon érhetjük el:
+Támogatja továbbá a backend-oldali dinamikus routing-ot, azaz például a \lstinline|pages/api/books/[id].tsx| fájl a \lstinline|pages/api/<id>| URL-nek felel meg, ahol
+az \lstinline|id| változót alábbi módon érhetjük el:
 
 \begin{lstlisting}[language=Java, caption=Next.js dinamikus routing]
 export default function handler(req, res) {

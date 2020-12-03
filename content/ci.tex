@@ -1,0 +1,25 @@
+\chapter{CI/CD}
+
+A Continuous Integration / Continuous Delivery egy manapság már általánosan használt módszer az alkalmazások folyamatos tesztelésére és publikálására.
+
+A Simonyi Könyvtár esetében igyekeztem ezeket a megközelítéseket alkalmazni a fejlesztés és deploy esetében is.
+
+\section{Continuous Integration}
+
+A forráskód tárolására a GitHub-ot használtam, így CI megoldásnak evidens volt a GitHub Actions használata.
+
+Ez esetben elegendő egy \lstinline|.yaml| fájlt elhelyezni a \lstinline|.github/workflows/| mappába elhelyezni, és egy \lstinline|git push|
+parancs kiadása után automatikusan lefut a szkriptünk. Ennek az állapotát a GitHub repository webes felületén tudjuk követni.
+
+\section{Continuous Delivery}
+
+Az alkalmazás hostolására két szolgáltatást használtam.
+
+A frontend és backend közös deploymentjéhez a Vercel-t választottam. Ez rendkívül egyszerűen integrálható a Next.js keretrendszerrel,
+elegendő a GitHub repository-val összekötni és bármiféle extra konfiguráció nélkül elérhető lesz az alkalmazásunk egy \lstinline|git push| parancs kiadása után.
+
+A Vercel felületén lehetőségünk van a deployment státuszát ellenőrizni, korábbi deploymentre visszaállni, illetve a Next.js 10-es verziójától kezdve
+már különböző analitikák monitorozására is.
+
+Az adatbázishoz a Heroku ingyenes PostgreSQL szolgáltatását vettem igénybe. Ebben az esetben elegendő az adatbázishoz kapott
+connection string-et a Vercel felületén a környezeti változók között megadni, és az alkalmazásunk hozzáfér az adatbázisunkhoz.

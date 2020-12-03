@@ -1,3 +1,10 @@
 \section{A frontend felépítése}
 
-Lorem ipsum
+A Next.js framework a frontenden is alkalmazza a file-based routing koncepcióját. Ennek megfelelően elegendő az \lstinline|src/pages/|
+mappában elhelyezett \lstinline|.tsx| fájlban definiálnunk egy React komponenst, és a keretrendszer a megadott fájlnévnek megfelelő URL-en
+fogja kirenderelni az oldalunkat.
+
+Az adminoknak elérhető oldalakat egy külön \lstinline|admin| mappába helyeztem a könnyebb elkülöníthetőség érdekében.
+
+A \lstinline|components/| mappába kerültek az újrafelhasznált, illetve kiszervezett React komponensek.
+Az általam írt saját React hook-ok pedig az \lstinline|src/lib/hooks.tsx| fájlba kerültek.
