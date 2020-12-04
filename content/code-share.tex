@@ -1,1 +1,8 @@
 \section{Kódmegosztás}
+Mivel a backend és frontend kódja egyazon git repository-ban van elhelyezve, a kettő között kódmegosztás szinte triviális.
+
+Bármely, az \lstinline|src| mappán belül elhelyezett fájl felhasználható a szerver- és kliensoldali kód számára. Ennek megfelelően
+az \lstinline|src/lib/interfaces.ts| és \lstinline|src/lib/constants.ts| fájlokban találhatóak a közösen használt interfészek és konstans változók.
+
+Az általam használt Prisma ORM egy nagy előnye továbbá, hogy az általa generált interfészek és típusdefiníciók is használhatóak kliens- és szerveroldalon
+egyaránt, ezáltal csökken a bugok mennyisége, és egy esetleges sémaváltozás esetén jóval könnyebb lekövetni az okozott változásokat.
