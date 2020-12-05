@@ -11,6 +11,18 @@ A forráskód tárolására a GitHub-ot használtam, így CI megoldásnak eviden
 Ez esetben elegendő egy \lstinline|.yaml| fájlt elhelyezni a \lstinline|.github/workflows/| mappába elhelyezni, és egy \lstinline|git push|
 parancs kiadása után automatikusan lefut a szkriptünk. Ennek az állapotát a GitHub repository webes felületén tudjuk követni.
 
+\subsection{Statikus kódanalízis}
+
+A fejlesztés során nagy segítséget nyújtanak azok az eszközök, amelyek segítségével a forráskódunkat még fordítás vagy futtatás
+előtt ellenőrizni tudjuk.
+
+A JavaScript világában ennek egyik szinte sztenderddé vált eszköze az \lstinline|eslint|, amely egy TypeScript-hez is használható linter.
+Ennek segítségével ki tudjuk szűrni a nem használt kódrészleteket, valamint egységes formázást írhatunk elő a forráskódra, nagyban segítve
+ezzel a közös munkát.
+
+Az alkalmazásomban én is ezt a megoldást használtam, mely lokálist a \lstinline|yarn lint| parancs kiadásával lokálisan, valamint
+a GitHub Actions build folyamataként automatikusan is futtatható.
+
 \section{Continuous Delivery}
 
 Az alkalmazás hostolására két szolgáltatást használtam.

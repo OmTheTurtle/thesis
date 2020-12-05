@@ -1,5 +1,12 @@
 \chapter{Használt technológiák kiválasztása}
 
+\section{Verziókezelés}
+
+A fejlesztés során fontos a változások átlátható, könnyű követése, a szoftver különböző verzóinak követése.
+
+Erre a mára már kvázi ipari sztenderdnek számító \lstinline|git| nevű szoftvert vettem igénybe. A forráskód felhőben
+történő tárolására a GitHub szolgáltatását használtam.
+
 %----------------------------------------------------------------------------
 \section{Frontend}
 %----------------------------------------------------------------------------
@@ -84,9 +91,8 @@ adatelérés     példányosított            query interface, chain-elt függv�
 
 
 \section{REST és GraphQL}
-Előnyök és hátrányok mindkét esetben, miért rest lett végül (egyszerű, zero-config, ismert, API routes-szal jól integrálódik)
 
-A fentieken túl utolsó lépésként szükséges volt eldönteni a frontend és a backend közötti kommunikáció lebonyolítását (TODO: ezt szebben).
+A fentieken túl utolsó lépésként szükséges volt eldönteni a frontend és a backend közötti kommunikáció módját.
 A REST architektúra mellett ugyanis megjelent a GraphQl, ami az eddigi lehetőségekhez képest egy flexibilisebb megoldást kínál az adatok elérésére.
 A két technológia előnyeit és hátrányait az alábbi táblázatban foglaltam össze.
 
@@ -95,10 +101,10 @@ TODO: táblázat
 A fenti szempontokat figyelembe véve végül a hagyományos REST architektúra alkalmazása mellett döntöttem.
 
 \section{TypeScript}
-A frontend, illetve a Node.js világában lehetőségünk van arra, hogy a JavaScript helyett egy arra lefordítható
+A frontend illetve a Node.js világában lehetőségünk van arra, hogy a JavaScript helyett egy arra lefordítható
 egyéb nyelvet használjunk fejlesztés közben. Az egyik ilyen lehetőség a TypeScript, amely egy már több éve jelenlévő,
-gyorsan fejlődő alternatíva többek között olyan funkciókkal, mint a statikus típusosság, type inference és magas szintű IDE
+gyorsan fejlődő alternatíva többek között olyan funkciókkal, mint a static type check, type inference és magas szintű IDE
 integráció.
 
 Az általam választott technológiák közül a Prisma kifezezetten épít a TypeScript nyújtotta előnyökre, illetve a Next.js
-integrációhoz elegendő egy konfigurációs fájlt létrehozni, evidens volt, hogy az alkalmazást TypeScript segítségével írjam meg.
+integrációhoz elegendő egy konfigurációs fájlt létrehozni, így evidens volt, hogy az alkalmazást TypeScript segítségével írjam meg.

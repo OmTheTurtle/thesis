@@ -29,9 +29,6 @@ parancsokat kiadva létrehozzuk és futtatjuk a Prisma migrációt.
 Ez utóbbi megoldás előnyei, hogy egy központi helyen tudjuk kezelni a séma változásait, valamint ezt adatbázis-agnosztikus módon
 tehetjük meg.
 
-A Prisma DSL-ben a dbdiagram.io-hoz hasonló módon tudjuk felvenni a relációkat. Ennek nagy előnye, hogy a táblák közötti kapcsolatokat
-egyszerűen tudjuk modellezni, amit a \lstinline|prisma migrate| át tud vezetni az adatbázisunkba.
-
 \begin{lstlisting}[caption=Séma leírása a Prisma DSL-ben]
 generator client {
   provider = "prisma-client-js"
@@ -123,3 +120,15 @@ enum userrole {
 }
 \end{lstlisting}
 
+A Prisma DSL-ben a dbdiagram.io-hoz hasonló módon tudjuk felvenni a relációkat. Ennek nagy előnye, hogy a táblák közötti kapcsolatokat
+egyszerűen tudjuk modellezni, amit a \lstinline|prisma migrate| át tud vezetni az adatbázisunkba.
+
+Ahogy a fenti kódrészletben is látszik, a Category és a Book modellek közötti kapcsolatot biztosító kapcsolótábla nem jelenik
+meg a Prisma schema fájlban. Ez egy úgynevezett implicit kapcsolat, melyet a Prisma motorja automatikusan kezel és a migráció során
+létrehozza a megfelelő táblát a két entitás között.
+
+\subsection{Kapcsolódás az adatbázishoz}
+A Prisma esetében az adatbáziskapcsolatot egy connection string segítségével tudjuk megadni, amit alapesetben
+a megadott környezeti változóból (\lstinline|DATABASE_URL|) olvas ki. Ennek nagy előnye, hogy könnyen tudunk lokális
+és remote adatbázisok között váltani, illetve egyszerűvé teszi a production-ben lévő kód és az adatbázis közötti
+kapcsolat létrehozását.
