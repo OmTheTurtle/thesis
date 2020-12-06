@@ -1,0 +1,39 @@
+\chapter{Összefoglalás}
+
+Az alkalmazás elkészítése során sok eddig ismeretlen problémát kellett megoldanom, valamint megismertem
+általam eddig kevésbé használt technológiákat és módszereket. A dolgozat elkészítése sok tapasztalattal látott
+el, amiket kamatoztathatok a későbbiekben.
+
+\section{Továbbfejlesztési lehetőségek}
+
+\subsection{WebSocket}
+
+A végfelhasználók és az oldal adminjai közötti kommunikáció jelenleg egyszerű HTTP kérésekkel történik,
+ami bár az SWR könyvtárnak köszönhetően képes az oldal újratöltése nélkül frissíteni az üzeneteket tab refocus esetén,
+de nem nyújt valós idejű kommunikációs élményt.
+
+Ennek egyik fejlesztési lehetősége a WebSocket használata, mely segítségévez l a szerver is tud direkt
+üzenetet küldeni a frontend felé, ezzel valódi real-time kommunikációt lehetővé téve.
+
+\subsection{Értesítés rendszer}
+
+A felhasználói élmény javításának egyik módja lehet egy értesítés rendszer implementálása. Ennek segítségével
+az oldalon regisztráltak elsőkézből értesülnének, ha a foglalásuk állapota módosult vagy ahhoz új komment érkezett.
+
+Ez megvalósítható csak a weboldalba épített módon, vagy email küldésével is, vagy akár a kettő kombinálásával.
+
+\subsection{Keresés továbbfejlesztése}
+
+A jelenleg megvalósított megoldás bár kulcsszavas keresésre jól alkalmazható, de elgépeléseket, illetve
+szavak részleteire keresést nem támogat.
+
+Egy fejlettebb, robosztusabb keresést biztosító rendszert kínál például az Algolia\footnote{https://www.algolia.com/} vagy az Elastic Search\footnote{https://www.elastic.co/} szolgáltatás,
+melyek működhetnek cloud vagy self-hosted módban is.
+
+\subsection{Auth.SCH integráció}
+
+A kollégisták által igénybe vett weboldalaknál gyakran használt SSO megoldás az Auth.SCH\footnote{https://auth.sch.bme.hu/}, amivel
+a hallgatók egy központosított azonosítóval tudnak bejelentkezni.
+
+Ezt kihasználva a felhasználóknak nem kell külön jelszót megjegyezniük az alkalmazás használatához,
+illetve az itt tárolt adatok alkalmazhatóak a felhasználó jogkörének megállapítására.
