@@ -13,34 +13,8 @@ vagy az üzemeltetőknek írt emailen keresztül tudják ellenőrizni. Ez nagyba
 Ezen helyzet adta a motivációt arra, hogy készítsek egy, a hallgatók által könnyen hozzáférhető, és az üzemeltetők által kényelmesen menedzselhető webes alkalmazást a szakkollégium számára.
 A cél egy reszponzív, web alapú felület tervezése és elkészítése a könyvtár könnyű használhatósága érdekében. (TODO: ezt talán szebben fogalmazni)
 
-TODO: szebben
-fejezetek:
-- Használt technológiák kiválasztása
-  - frontend, backend, db, rest/graphql
-- alkalmazás felépítése
-  - adatbázis
-    - db séma (dbdiagram export, prisma schema, prisma migrate)
-    - prisma (schema file, migrations)
-  - backend
-    - nextjs file-based routing, middleware-ek
-  - frontend
-    - components/ mappa, file based routing
-  - kódmegosztás
-    - lib/ mappa, prisma típusok frontenden
-- alkalmazás működése
-  - authentikáció, authorizáció
-  - adatlekérés a backendtől: useSWR
-  - prisma
-  - kosár
-  - order leadása, menedzselése
-  - keresés: postgres full text search, kihívások, megoldások
-  - fájlfeltöltés: amazon S3
+A dolgozat következő fejezeteiben bemutatom az alkalmazás tervezési és fejlesztési lépéseit.
+Ezen belül szeretnék kitérni az általam végül kiválasztott technológiák bemutatására, a kész szoftver struktúrális felépítésére,
+annak működési elvére, valamint az egyes komponensek közötti kommunikáció megvalósítására.
 
-- tesztek (???)
-- CI
-  - github actions, eslint
-- hosting, jövőbeli deploy (kubernetes, docker)
-- jövőbeli bővítési lehetőségek
-  - real-time chat websocket segítségével
-  - hosted / dockerben futó fuzzy search (elastic, algolia)
-  - authsch integráció a user-pass mellé
+Végül kitérek a fejlesztést segítő eszközök bemutatására, majd bemutatom a jövőbeli fejlesztési lehetőségeket.

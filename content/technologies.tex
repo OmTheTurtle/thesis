@@ -33,7 +33,7 @@ Mindenképpen szerettem volna elkerülni a külön repository használtatát.
 Ennek fő okai, hogy mind a fejlesztés, mind a deployment jelentősen egyszerűsödik, valamint közös könyvtár esetén a közös kódrészletek megosztása is triviálissá válik.
 
 A fentiek miatt a lehetőségeim a NodeJS alapú megoldásokra szűkítettem le. Egy népszerű, és általam már kipróbált megoldás az Express keretrendszer, azonban a React világában létezik egy, az igényeimnek méginkább megfelelő framework: a NextJS.
-Ez egy React-ra épülő, SSR-t (TODO: lábjegyzet) támogató keretrendszer, amely rendelkezik egy úgynevezett API routes nevű funkcióval.
+Ez egy React-ra épülő, SSR-t\footnote{Server-Side Rendering} támogató keretrendszer, amely rendelkezik egy úgynevezett API routes nevű funkcióval.
 
 Ennek segítségével a React alkalmazásunkon belül készíthető egy API réteg, amely a fordítás után szerveroldalon futó függvényekké lesz átalakítva.
 Ezzel lényegében megspóroljuk, hogy külön API-t és hozzávaló elérési, illetve deployment környezetet kelljen létrehozni, miközben egy Express-hez hasonló interfészt tudunk használni.
@@ -58,7 +58,7 @@ Míg az előbbi megoldás egy erős absztrakciós réteget képez az adatbázis 
 Ez utóbbi előnye, hogy a felhasználó által írt kód közelebb van a végső soron lefutó SQL-hez, így átláthatóbbak az egyes lekérések végeredményei.
 
 A query builder megoldások közül is kiemelkedik a Prisma, amely egy NodeJS környezetben működő adatbázis kliens, ami a hansúlyt a type safety-re helyezi.
-Az adatbázis sémát egy speciális .prisma kiterjesztésű fájlban tudjuk megírni, majd ezt a Prisma migrációs eszközével tudjuk az adatbázisunkba átvezetni. (TODO: lábjegyzet hogy a migráció még csak experimental)
+Az adatbázis sémát egy speciális \lstinline|.prisma| kiterjesztésű fájlban tudjuk megírni, majd ezt a Prisma migrációs eszközével tudjuk az adatbázisunkba átvezetni.
 Ezután lehetőségünk van a séma alapján a sémából TypeScript típusokat generálni, melyek használata nagyban megkönnyíti és felgyorsítja a fejlesztés menetét.
 
 \begin{lstlisting}[language=Java, caption=Adatbázis beillesztés TypeORM környezetben]
@@ -79,26 +79,27 @@ const user = await prisma.user.create({
 })
 \end{lstlisting}
 
-todo: táblázat
-
-                  ORM                     query builder
-paradigma         oop                  funkcionális programozás
-séma definíció  ts class+dekorátorok         változó
-adatelérés     példányosított            query interface, chain-elt függvények
-              objektumon keresztül
-
-
-
+A fentiek alapján a Prisma könyvtárat használtam az adatbázissal történő kommunikációra.
 
 \section{REST és GraphQL}
 
 A fentieken túl utolsó lépésként szükséges volt eldönteni a frontend és a backend közötti kommunikáció módját.
-A REST architektúra mellett ugyanis megjelent a GraphQl, ami az eddigi lehetőségekhez képest egy flexibilisebb megoldást kínál az adatok elérésére.
-A két technológia előnyeit és hátrányait az alábbi táblázatban foglaltam össze.
 
-TODO: táblázat
+A REST architektúra mellett ugyanis a közelmúltban megjelent a GraphQl. Ez egy, a REST API-nál flexibilisebb megoldást
+kínál az adatok elérésére. Hátránya azonban, hogy sok extra kód és konfiguráció szükséges a használatához.
+Ezzel szemben -- Next.js API routes használatával -- egy REST API végpont létrehozásához csupán a kiválasztott névvel kell egy fájlt
+helyezni az \lstinline|src/pages/api| könyvtárba.
 
 A fenti szempontokat figyelembe véve végül a hagyományos REST architektúra alkalmazása mellett döntöttem.
+
+\subsection{Kommunikáció megvalósítása}
+
+A HTTP kérések küldéséhez rengeteg megoldás közül tudunk válogatni.
+A legegyszerűbb a böngészőbe beépített fetch API, ami egy egyszerű interfészt biztosít, azonban funkciókat tekintve erősen korlátozott.
+
+A választásom végül a Vercel által fejlesztett SWR-re\footnote{https://swr.vercel.app/} esett. Ez egy React könyvtár, ami a stale-while-revalidate
+stratégiát alkalmazza. Segítségével könnyedén tudjuk a változtatásokat gyorsan és reaktívan követni a frontenden, miközben fejlett cache
+funkcionalitást is nyújt.
 
 \section{TypeScript}
 A frontend illetve a Node.js világában lehetőségünk van arra, hogy a JavaScript helyett egy arra lefordítható

@@ -1,3 +1,118 @@
 \chapter{Az alkalmazás működése}
 
-Lorem ipsum
+\section{Authentikáció}
+
+A felhasználók magukat egy email-jelszó párossal tudják azonosítani, melyet regisztrációkor adhatnak meg.
+
+A regisztráció kezelésénék két dologra kellett figyelmet fordítanom: egy email cím csak egyszer szerepelhessen
+az adatbázisban, valamint a jelszót megfelelő módon tároljuk az adatbázisban.
+
+Az első kritériumra megoldásként szolgál az adatbázisban az email mező egyedivé tétele, valamint a regisztráció során
+a megadott emailcím ellenőrzése.
+
+A jelszó biztonságos tárolása érdekében azt regisztráció során hash-elve mentem el az adatbázisba, erre az \lstinline|argon2| könyvtárat
+használtam fel.
+
+\subsection{Megvalósítás}
+
+A session kezeléshez a \lstinline|passport| könyvtárat és cookie alapú megoldást használtam. Ennek során a felhasználót a böngészőben
+tárolt cookie információ azonosítja, amit backenden ellenőrzi tudunk.
+
+A frontenden történő ellenőrzéshez egy hook-ot készítettem, mellyel ellenőrzhető, hogy a felhasználó be van-e jelentkezve.
+
+\begin{lstlisting}[caption=Authentikáció hook]
+export function useUser() {
+  const { data, mutate } = useSWR<{ user: User }>("/api/user", fetcher)
+  const loading = !data
+  const user = data?.user
+  return [user, { mutate, loading }] as const
+}
+\end{lstlisting}
+
+\section{Authorizáció}
+
+Az alkalmazás megfelelő használata érdekében szükséges volt bizonyos funkciók elérésének szűkítésére. Ehhez a role-based access control
+megoldást választottam, mely alapján a felhasználókat különböző kategórákba tudjuk besorolni, majd ezeknek a kategóriáknak adunk jogosultságokat.
+
+Ennek megfelelően három jogosultság-kategóriát hoztam létre: \lstinline|BASIC|, \lstinline|ADMIN| és \lstinline|EDITOR|.
+
+A \lstinline|BASIC| felhasználók képesek foglalást leadni és a sajátjaikhoz megjegyzést fűzni, valamint a hozzájuk tartozó foglalásokat listázni.
+
+Az \lstinline|EDITOR| jogosultsággal rendelkezők ezen felül képesek az egyes foglalások állapotát állítani, valamint bármyely foglaláshoz
+megjegyzést fűzni.
+
+Az \lstinline|ADMIN| joggal rendelkezők a fentieken kívül képesek könyvek és kategóriák hozzáadására, törlésére és szerkesztésére.
+
+\subsection{Megvalósítás}
+
+A kódbázison belül a frontenden és backendes is szükséges elleőrizni a megfelelő jogosultságokat.
+
+A backenden ehhez létrehoztam egy middleware-t, amely a már bejelentkezett emberek jogosultságát ellenőrzi.
+\begin{lstlisting}[caption=Authorizáció middleware]
+const requireRole = (...roles: userrole[]) => {
+  return (req: NextApiRequest, res: NextApiResponse, next: NextHandler) => {
+    if (roles.some(it => it === req.user.role)) {
+      return next()
+    } else {
+      return res.status(401).json({ message: "Nincs megfelelő jogosultságod" })
+    }
+  }
+}
+\end{lstlisting}
+
+A frontenden történő validáció esetén két forgatókönyv lehetséges: egy teljes oldal vagy az oldalon belül bizonyos komponensek
+elrejtése a felhasználó elől.
+
+Az előbbi kezelésére létrehoztam egy React hook-ot, amivel az oldalak megjelenítését tudjuk kontrollálni.
+
+\begin{lstlisting}[caption=Authorizációs hook és használata]
+// src/lib/hooks.tsx
+export function useRequireRoles(roles: userrole[] = []) {
+  const [user] = useUser()
+
+  return roles.some((it) => it === user?.role)
+}
+
+// src/pages/admin/index.tsx
+const hasAccess = useRequireRoles([userrole.ADMIN, userrole.EDITOR])
+if (!hasAccess) {
+  return <ErrorPage statusCode={401} message="Nincs megfelelő jogosultságod!" />
+}
+\end{lstlisting}
+
+Az oldalon belüli bizonyos tartalmak elrejtésére készítettem egy komponenst, ami a tartalmát a felhasználó jogosultsági szintjének
+megfelelően jeleníti csak meg.
+
+\begin{lstlisting}[caption=Authorizáció komponens és használata]
+// src/components/HasRole.tsx
+export default function HasRole({ roles, children }: Props) {
+  const [user] = useUser()
+  const hasRole = roles.some((it) => it === user?.role)
+
+  return <>{hasRole && children}</>
+}
+
+// src/components/Navbar.tsx
+<HasRole roles={[userrole.ADMIN, userrole.EDITOR]}>
+  <NextLink href="/admin">
+    <Link>Admin</Link>
+  </NextLink>
+</HasRole>
+\end{lstlisting}
+
+A fenti módszerek alkalmazásásval egy robosztus jogosultság-kezelő megoldást sikerült implementálnom a szoftverbe.
+
+
+\section{Könyvek listázása}
+
+\section{Keresés a könyvek között}
+
+\section{Foglalási folyamat}
+
+\section{Admin funkciók}
+
+\subsection{Fájlfeltöltés}
+
+\section{Dark Mode}
+
+

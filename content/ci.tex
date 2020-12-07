@@ -1,4 +1,7 @@
-\chapter{CI/CD}
+\chapter{Fejlesztést segítő eszközök}
+
+Az alkalmazás készítése során igénybe vettem néhány olyan szolgáltatást, amelyek bár extra funkcionalitást nem adnak hozzá a kódbázishoz,
+de nagyban megkönnyítik a fejlesztést végzők munkáját.
 
 A Continuous Integration / Continuous Delivery egy manapság már általánosan használt módszer az alkalmazások folyamatos tesztelésére és publikálására.
 
@@ -35,3 +38,16 @@ már különböző analitikák monitorozására is.
 
 Az adatbázishoz a Heroku ingyenes PostgreSQL szolgáltatását vettem igénybe. Ebben az esetben elegendő az adatbázishoz kapott
 connection string-et a Vercel felületén a környezeti változók között megadni, és az alkalmazásunk hozzáfér az adatbázisunkhoz.
+
+\subsection{Prisma Studio}
+
+A Prisma Studio egy grafikus felület az adatbázis kezeléséhez. Ennek használatával adatbázismotortól függetlenül tudjuk
+az adatokat módosítani, vagy új rekordot hozzáadni. Ezzel rendkívül kényelmessé tudjuk tenni a teszteléshez szükséges
+adatok felvitelét illetve kezelését.
+
+\begin{figure}[!ht]
+\centering
+\includegraphics[width=150mm, keepaspectratio]{figures/prisma-studio.png}
+\caption{A Prisma Stuio felülete}
+\label{fig:DBSchema}
+\end{figure}
