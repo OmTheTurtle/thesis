@@ -295,7 +295,27 @@ azonosító generált kerül be. Így lehetőségünk van a képek egyszerű és
 \section{Adaptív UI}
 
 A felület fejelsztése közben fontos volt, hogy minden oldal megfelelően működjön mobil képernyőkön is.
-A Chakra UI szerencsére első kézből támogatja ezt a responsive properties funkciójának köszönhetően.
+A Chakra UI szerencsére első kézből támogatja ezt a Responsive Styles funkciójának köszönhetően.
+
+Ennek segítségével egy Chakra komponens tulajdonságait egy tömbben tudjuk megadni, ahol minden elem egy adott képernyőmérethez
+fog társulni.
+
+\begin{lstlisting}[caption=Chakra UI Responsive Styles használata]
+<Flex direction={["column", null, "row"]}>
+  <Box mr={4}>
+    <NextImage
+      src={
+        book.image
+          ? `${process.env.NEXT_PUBLIC_S3_URL}/${book.image}`
+          : "https://via.placeholer.com/200x300"
+      }
+      width={300}
+      height={450}
+    />
+  </Box>
+  {/* Other content */}
+</Flex>
+\end{lstlisting}
 
 \begin{figure}[!ht]
   \centering
