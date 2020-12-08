@@ -102,17 +102,240 @@ export default function HasRole({ roles, children }: Props) {
 
 A fenti módszerek alkalmazásásval egy robosztus jogosultság-kezelő megoldást sikerült implementálnom a szoftverbe.
 
-
 \section{Könyvek listázása}
 
-\section{Keresés a könyvek között}
+A kezdőoldalon az elérhető könyveket tudjuk listázni egy rácsszerkezetben.
+Itt látható a könyvöz kapcsolt borítókép, a könyv címe, szerzője és kategóriái.
+
+\begin{figure}[!ht]
+  \centering
+  \includegraphics[width=150mm, keepaspectratio]{figures/index.png}
+  \caption{Az alkalmazás kezdőlapja}
+  \label{fig:IndexPage}
+\end{figure}
+
+\subsection{Részletes nézet}
+
+A főoldalon egy könyvre kattintva megkapjuk annak részletes nézetét. Itt láthatjuk az összes hozzá tartozó információt, valamint
+lehetőségünk van a könyv kosárba helyezésére (feltéve, hogy van belőle elérhető példány).
+
+\begin{figure}[!ht]
+  \centering
+  \includegraphics[width=100mm, keepaspectratio]{figures/book-detail-view.png}
+  \caption{Könyv részletes nézete}
+  \label{fig:BookDetailView}
+\end{figure}
+
+\subsection{Keresés a könyvek között}
+
+A főoldalon tudunk a meglévő könyvek közötti kulcsszavas keresésre. Ezt a PostgreSQL Full Text Search funkciójával implementáltam.
+
+Ehhez szükséges volt létrehozni az indexeléshez szükséges oszlopot a \lstinline|Book| táblán, ami alapján az adatbázismotor a kersést
+el tudja végezni.
+
+\begin{lstlisting}[caption=A kereséshez szükséges SQL utasítások]
+ALTER TABLE "Book"
+ADD COLUMN document tsvector;
+update "Book"
+set document = to_tsvector(title || ' ' || author || ' ' || publisher || '' || notes);
+
+ALTER TABLE "Book"
+ADD COLUMN document_with_idx tsvector;
+update "Book"
+set document_with_idx = to_tsvector(title || ' ' || coalesce(author, '') || ' ' || coalesce(publisher, '') || '' || coalesce(notes, ''));
+CREATE INDEX document_idx
+ON "Book"
+USING GIN(document_with_idx);
+
+ALTER TABLE "Book"
+  ADD COLUMN document_with_weights tsvector;
+update "Book"
+set document_with_weights = setweight(to_tsvector(title), 'A') ||
+  setweight(to_tsvector(coalesce(author, '')), 'B') ||
+  setweight(to_tsvector(coalesce(publisher, '')), 'C') ||
+  setweight(to_tsvector(coalesce(notes, '')), 'D');
+CREATE INDEX document_weights_idx
+  ON "Book"
+  USING GIN (document_with_weights);
+
+CREATE FUNCTION book_tsvector_trigger() RETURNS trigger AS $$
+begin
+  new.document :=
+  setweight(to_tsvector('english', coalesce(new.title, '')), 'A')
+  || setweight(to_tsvector('english', coalesce(new.author, '')), 'B')
+  || setweight(to_tsvector('english', coalesce(new.publisher, '')), 'C')
+  || setweight(to_tsvector('english', coalesce(new.notes, '')), 'D');
+  return new;
+end
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER tsvectorupdate BEFORE INSERT OR UPDATE
+    ON "Book" FOR EACH ROW EXECUTE PROCEDURE book_tsvector_trigger();
+
+\end{lstlisting}
+
+A keresés implementálásához szükséges volt még egy egyedi lekérdezés írása, ugyanis a Prisma jelenleg nem támogatja a \lstinline|tsvector|
+alapú keresést. Ehhez az alábbi megoldást használtam a backenden.
+
+\begin{lstlisting}[caption=Könyvek közti keresés megvalósítása]
+const sql = escape(`
+select id, title, author, "stockCount", "updatedAt", image
+from "Book"
+where document_with_idx @@ plainto_tsquery('%s')
+order by ts_rank(document_with_idx, plainto_tsquery('%s')) desc;`, term)
+const books = await db.$queryRaw(sql)
+\end{lstlisting}
+
+Alapesetben ha elkezdünk a keresőmezőbe gépelni, a frontend minden egyes leütés után kérést intéz a backend felé.
+Ez azonban felesleges forgalmat és adatbáziselérést okoz, ezért az input késleltetésére a \lstinline|use-debounce| pagckage-et használtam.
+
+\begin{lstlisting}[caption=A keresést megvalósító kódrészlet a frontenden]
+const [term, setTerm] = useState("")
+const { data, error } = useSWR<BookWithCategories[]>(`/api/books?q=${term}`, fetcher)
+const debounced = useDebouncedCallback((value) => setTerm(value), 500)
+
+return (
+  <Input
+    placeholder="Keress a könyvek között!"
+    mt="1rem"
+    onChange={(e) => debounced.callback(e.target.value)}
+  />
+  {/* ... */}
+)
+\end{lstlisting}
 
 \section{Foglalási folyamat}
 
+Az alkalmazás legfontosabb eleme a könyvek foglalásának nyomonkövetése. Az alábbi ábrán ennek a folyamatát foglaltam össze.
+
+% TODO: folyamatábra a foglalásról: kosárba helyezés -> foglalás leadása -> megbeszélés -> leadás
+
+\subsection{Kosár}
+
+A könyv részletes nézetében lehetőség van a kosárba helyezésre. Ennek a tartalmát a felső navigációs sávon lévő bevásárlókosár
+ikonra kattintva lehet megtekinteni.
+
+\begin{figure}[!ht]
+  \centering
+  \includegraphics[width=150mm, keepaspectratio]{figures/cart.png}
+  \caption{Kosár oldal}
+  \label{fig:CartPage}
+\end{figure}
+
+Itt lehetőség van az egyes könyvek darabszámának állítására, illetve a kosár tartalmának módosítására.
+
+Ezután a felhasználó ki tudja választani, hogy meddig szeretné kiválasztani a könyveket, majd a ``Foglalás leadása'' gombra kattintva
+véglegesítheti azt.
+
+\subsection{Foglalás kezelése}
+
+A foglalás leadás után a ``Kölcsönzéseim'' linkre kattintva tudjuk listázni azokat. Itt egy adott kölcsönzésre kattintva
+léphetünk a részletes nézetre, ahol megjegyzéseket tudunk fűzni hozzá. Ez a funkció szolgál az átvételi időpont egyeztetésére,
+problémák és egyéb igények megbeszélésére.
+
+\begin{figure}[!ht]
+  \centering
+  \includegraphics[width=150mm, keepaspectratio]{figures/orders-list.png}
+  \caption{Kölcsönzések listázása}
+  \label{fig:S3Console}
+\end{figure}
+
+
+\begin{figure}[!ht]
+  \centering
+  \includegraphics[width=150mm, keepaspectratio]{figures/order-detail.png}
+  \caption{Kölcsönzés részletei kommentekkel}
+  \label{fig:S3Console}
+\end{figure}
+
+
 \section{Admin funkciók}
+
+Lorem ipsum valkjsdf
+asfd
+asdfa
+sfd
+a
+fd
+
+\subsection{Könyvek kezelése}
+a
+sfdas
+dfa
+s
+as
+dfaasdf
+
+
+
+asdf
+as
+df
+
 
 \subsection{Fájlfeltöltés}
 
+A könyvekhez opcionálisan megadható egy borítókép, amit a felhasználó a saját gépéről választhat ki.
+
+Ennek a tárolására az Amazon S3 szolgáltatását választottam. A csatolt képet a frontend először elküldi a backendnek,
+majd az az \lstinline|aws-sdk| könyvtárat használva feltölti a képet az S3 bucket-be, az adatbázisba csak a képet
+azonosító generált kerül be. Így lehetőségünk van a képek egyszerű és adatbázisfüggetlen kezelésére.
+
+\begin{figure}[!ht]
+  \centering
+  \includegraphics[width=150mm, keepaspectratio]{figures/s3-dashboard.png}
+  \caption{Amazon S3 konzol}
+  \label{fig:S3Console}
+\end{figure}
+
+\subsection{Kategóriák kezelése}
+
+\subsection{Foglalások kezelése}
+
+\section{Adaptív UI}
+
+A felület fejelsztése közben fontos volt, hogy minden oldal megfelelően működjön mobil képernyőkön is.
+A Chakra UI szerencsére első kézből támogatja ezt a responsive properties funkciójának köszönhetően.
+
+\begin{figure}[!ht]
+  \centering
+  \includegraphics[width=75mm, keepaspectratio]{figures/cart-mobile.png}
+  \caption{Kosár oldal mobil képernyőn, nyitott menüvel}
+  \label{fig:CartMobile}
+\end{figure}
+
 \section{Dark Mode}
 
+A Chakra UI egyik rendkívül hasznos tulajdonsága, hogy elsőrendű dark mode támogatással rendelkezik, és valamennyi komponensnek
+létezik sötét módú variánsa.
+Ennek segítségével gombnyomásra válthatunk a világos és sötét módok között.
 
+\begin{figure}[!ht]
+  \centering
+  \includegraphics[width=150mm, keepaspectratio]{figures/dark-mode.png}
+  \caption{Sötét téma}
+  \label{fig:DarkMode}
+\end{figure}
+
+\section{Validáció}
+
+A felhasználó által szolgáltatott adatok minden esetben potenciális veszélyforrást jelenthetnek, legyen szó XSS támadásról
+vagy az adatbázis struktúrájának integritásáról.
+
+Ezen adatok ellenőrzésére a \lstinline|yup| könyvtárat használtam. Segítségével definiálhatunk egy sémát, ami ellen
+a felhasználó által megadott adatot validálhatjuk. Ezáltal a potenciális inkonzisztenciákat még az adatbázisba írás előtt
+kiszűrhetjük és tudathatjuk a felhasználóval.
+
+\begin{lstlisting}[caption=yup validációs séma a könyvekre]
+export const BookSchema = yup.object().shape({
+  title: yup.string().required(),
+  author: yup.string(),
+  count: yup.number(),
+  stockCount: yup.number(),
+  isbn: yup.string(),
+  publisher: yup.string(),
+  publishedAt: yup.number(),
+  notes: yup.string(),
+  image: yup.string(),
+})
+\end{lstlisting}

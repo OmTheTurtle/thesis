@@ -39,15 +39,27 @@ már különböző analitikák monitorozására is.
 Az adatbázishoz a Heroku ingyenes PostgreSQL szolgáltatását vettem igénybe. Ebben az esetben elegendő az adatbázishoz kapott
 connection string-et a Vercel felületén a környezeti változók között megadni, és az alkalmazásunk hozzáfér az adatbázisunkhoz.
 
-\subsection{Prisma Studio}
+\section{Prisma Studio}
 
 A Prisma Studio egy grafikus felület az adatbázis kezeléséhez. Ennek használatával adatbázismotortól függetlenül tudjuk
 az adatokat módosítani, vagy új rekordot hozzáadni. Ezzel rendkívül kényelmessé tudjuk tenni a teszteléshez szükséges
 adatok felvitelét illetve kezelését.
 
 \begin{figure}[!ht]
-\centering
-\includegraphics[width=150mm, keepaspectratio]{figures/prisma-studio.png}
-\caption{A Prisma Stuio felülete}
-\label{fig:DBSchema}
+  \centering
+  \includegraphics[width=150mm, keepaspectratio]{figures/prisma-studio.png}
+  \caption{A Prisma Stuio felülete}
+  \label{fig:PrismaStudio}
+\end{figure}
+
+\section{Dependabot}
+
+A Dependabot segítségével automatizálhatjuk a függőségeinknek frissítését. Ennek köszönhetően azonnal értesülhetünk
+arról, ha egy package-nek új verziója érhető el.
+
+\begin{figure}[!ht]
+  \centering
+  \includegraphics[width=125mm, keepaspectratio]{figures/dependabot-pr.png}
+  \caption{Dependabot által nyitott Pull Request}
+  \label{fig:Dependabot}
 \end{figure}
