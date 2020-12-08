@@ -208,7 +208,54 @@ return (
 
 Az alkalmazás legfontosabb eleme a könyvek foglalásának nyomonkövetése. Az alábbi ábrán ennek a folyamatát foglaltam össze.
 
-% TODO: folyamatábra a foglalásról: kosárba helyezés -> foglalás leadása -> megbeszélés -> leadás
+\begin{figure}[!ht]
+  \centering
+  \includegraphics[width=50mm, keepaspectratio]{figures/order-flowchart.png}
+  \caption{Rendelés leadásának menete}
+  \label{fig:OrderChart}
+\end{figure}
+
+Egy foglalás leadása esetén a könyvből elérhető darabszámot is frissíteni kell. Ez több tábla szimultán módosításával jár,
+viszont az inkonzisztencia elkerülése érdekében ennek teljesítenie kell az ACID elveket.
+
+Mivel a Prisma jelenleg nem támogatja ilyen komplex módosítások egy utasításban történő végrehajtását, annak Transaction API
+funkcióját használtam. Ennek segítségével több, egymástól független adatbázismódosítást lehet egyetlen tranzakcióba csomagolni,
+így vagy minden kívánt módosítás érvényesül, vagy egyik sem.
+
+\begin{lstlisting}[caption=Transaction API használata kölcsönzés létrehozásakor]
+const createOrder = db.order.create({
+  data: {
+    returnDate,
+    user: {
+      connect: { id: userId },
+    },
+    books: {
+      create: books.map(it => ({
+        quantity: it.quantity,
+        books: {
+          connect: { id: it.id },
+        }
+      })),
+    }
+  },
+})
+
+const bookUpdates = books.map(book => {
+  const bookUpdate = db.book.update({
+    where: { id: book.id },
+    data: {
+      stockCount: { decrement: book.quantity }
+    }
+  })
+  return bookUpdate
+})
+
+const [order] = await db.$transaction([createOrder, ...bookUpdates])
+\end{lstlisting}
+
+A fenti kódrészlet három fő utasításra bontható: létrehozza az \lstinline|Order| táblában az új bejegyzést a foglalásra,
+beszúrja az \lstinline|Order| és \lstinline|Book| táblák közti kapcsolatot megteremtő kapcsolótáblába a megfelelő rekordokat,
+valamint frissíti a \lstinline|Book| táblában lévő könyvek elérhető darabszámát.
 
 \subsection{Kosár}
 
@@ -227,6 +274,17 @@ Itt lehetőség van az egyes könyvek darabszámának állítására, illetve a 
 Ezután a felhasználó ki tudja választani, hogy meddig szeretné kiválasztani a könyveket, majd a ``Foglalás leadása'' gombra kattintva
 véglegesítheti azt.
 
+A kosár adatainak tárolására a böngésző Local Storage funkcióját használtam.
+
+Ezen megoldás előnye, hogy bejelentkezés nélkül is hozzáadhatóak könyvek és egyszerűbbé teszi az adatbázisstruktúrát.
+Hátránya azonban, hogy nem kezeli a különböző böngészők (pl. asztali és mobil kliens) közötti szinkronizációt. Mivel ez utóbbi a
+követelmények kidolgozása közben nem merült fel, így az egyszerűbb megoldás alkalmazása mellett döntöttem.
+
+A kosár React-ban történő eléréséhez a \lstinline|use-persisted-state| könyvtárat vettem igénybe.
+
+Segítségével több böngészőablakon keresztül is szinkronban tartható a kosárba helyezett könyvek,
+valamint könyv hozzáadásakor illetve törlésekor automatikusan frissül minden megjelenített, kosárhoz kapcsolódó tartalom.
+
 \subsection{Foglalás kezelése}
 
 A foglalás leadás után a ``Kölcsönzéseim'' linkre kattintva tudjuk listázni azokat. Itt egy adott kölcsönzésre kattintva
@@ -237,7 +295,7 @@ problémák és egyéb igények megbeszélésére.
   \centering
   \includegraphics[width=150mm, keepaspectratio]{figures/orders-list.png}
   \caption{Kölcsönzések listázása}
-  \label{fig:S3Console}
+  \label{fig:OrderList}
 \end{figure}
 
 
@@ -245,35 +303,37 @@ problémák és egyéb igények megbeszélésére.
   \centering
   \includegraphics[width=150mm, keepaspectratio]{figures/order-detail.png}
   \caption{Kölcsönzés részletei kommentekkel}
-  \label{fig:S3Console}
+  \label{fig:OrderDetail}
 \end{figure}
 
 
 \section{Admin funkciók}
 
-Lorem ipsum valkjsdf
-asfd
-asdfa
-sfd
-a
-fd
+Az \lstinline|ADMIN| illetve \lstinline|EDITOR| jogosultsággal rendelkező felhasználóknak lehetőségük van a rendszerben
+lévő adatokat a webes felületről szerkeszteni. Ehhez a \lstinline|pages/admin| mappában külön oldalakat hoztam létre,
+a backenden pedig a védett middleware-ekben valósítottam meg a funkciókat.
 
 \subsection{Könyvek kezelése}
-a
-sfdas
-dfa
-s
-as
-dfaasdf
+
+A könyveket egy listanézet foglalja össze. Itt lehetőség van az egyes elemek törlésére és szerkesztésére, valamint új
+könyv hozzáadására. A szerkesztéshez és létrehozáshoz ugyanazt a komponenst használtam a kódduplikáció elkerülése érdekében.
+
+\begin{figure}[!ht]
+  \centering
+  \includegraphics[width=100mm, keepaspectratio]{figures/book-admin-list.png}
+  \caption{Könyvek listája az admin panelen}
+  \label{fig:BookAdminList}
+\end{figure}
+
+\begin{figure}[!ht]
+  \centering
+  \includegraphics[width=100mm, keepaspectratio]{figures/book-edit.png}
+  \caption{Könyv adatainak szerkesztése}
+  \label{fig:BookEdit}
+\end{figure}
 
 
-
-asdf
-as
-df
-
-
-\subsection{Fájlfeltöltés}
+\subsubsection{Fájlfeltöltés}
 
 A könyvekhez opcionálisan megadható egy borítókép, amit a felhasználó a saját gépéről választhat ki.
 
@@ -283,14 +343,47 @@ azonosító generált kerül be. Így lehetőségünk van a képek egyszerű és
 
 \begin{figure}[!ht]
   \centering
-  \includegraphics[width=150mm, keepaspectratio]{figures/s3-dashboard.png}
+  \includegraphics[width=125mm, keepaspectratio]{figures/s3-dashboard.png}
   \caption{Amazon S3 konzol}
   \label{fig:S3Console}
 \end{figure}
 
 \subsection{Kategóriák kezelése}
 
+A kategóriákat egy összefoglaló oldalon lehet szerkeszteni és törölni. Egy elem eltávolítása esetén
+minden hozzá kapcsolódó könyből is törlődik az adott kategória. Szerkesztés esetén egy felugró párbeszédablakban lehet
+megadni az új nevet.
+
+\begin{figure}[!ht]
+  \centering
+  \includegraphics[width=150mm, keepaspectratio]{figures/category-admin-list.png}
+  \caption{Kategóriák kezelése oldal}
+  \label{fig:CategoryAdmin}
+\end{figure}
+
 \subsection{Foglalások kezelése}
+
+% TODO
+A foglalásokat egy központi oldalon lehet listázni a fontosabb információkkal.
+
+\begin{figure}[!ht]
+  \centering
+  \includegraphics[width=150mm, keepaspectratio]{figures/order-admin-list.png}
+  \caption{Összes foglalás listázása az adminok számára}
+  \label{fig:OrderAdminList}
+\end{figure}
+
+Egy kölcsönzésre kattintva a részletes nézet jelenik meg. Itt az arra jogosultaknak lehetősége van az állapot módosítására vagy
+a foglalás törlésére. Szintén itt van lehetőség minden arra jogosultnak a foglaláshoz hozzászólást fűzni.
+
+\begin{figure}[!ht]
+  \centering
+  \includegraphics[width=150mm, keepaspectratio]{figures/order-admin-detail.png}
+  \caption{Foglalás részletes nézete az adminok számára}
+  \label{fig:OrderAdminDetail}
+\end{figure}
+
+Ha az állapot ``Visszahozva'' státuszra módosul, a foglalás leadásához hasonlóan firssülnek a könyvhöz tartozó elérhetőségi adatok.
 
 \section{Adaptív UI}
 
@@ -340,7 +433,7 @@ Ennek segítségével gombnyomásra válthatunk a világos és sötét módok k�
 \section{Validáció}
 
 A felhasználó által szolgáltatott adatok minden esetben potenciális veszélyforrást jelenthetnek, legyen szó XSS támadásról
-vagy az adatbázis struktúrájának integritásáról.
+vagy az adatbázis struktúrájának integritásáról. Emiatt különösen fontos a backenden történő adatok megfelelő validációja.
 
 Ezen adatok ellenőrzésére a \lstinline|yup| könyvtárat használtam. Segítségével definiálhatunk egy sémát, ami ellen
 a felhasználó által megadott adatot validálhatjuk. Ezáltal a potenciális inkonzisztenciákat még az adatbázisba írás előtt

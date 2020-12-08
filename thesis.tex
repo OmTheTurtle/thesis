@@ -42,6 +42,15 @@
 
 \selectthesislanguage
 
+% \makeatletter
+% \renewcommand*{\ext@figure}{lot}
+% \let\c@figure\c@table
+% \let\ftype@figure\ftype@table
+% \let\listoftableandfigures\listoftables
+% \renewcommand*\listtablename{List of Tables and figures}
+% \makeatother
+
+
 %~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 \include{include/titlepage}		   % Szakdolgozat/Diplomaterv címlap
 
@@ -67,6 +76,7 @@
 \include{content/technologies}
 \include{content/structure}
 \include{content/behaviour}
+\include{content/testing}
 \include{content/ci}
 \include{content/wrapup}
 
@@ -77,8 +87,8 @@
 
 % List of Figures, Tables
 %~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-%\listoffigures\addcontentsline{toc}{chapter}{\listfigurename}
-%\listoftables\addcontentsline{toc}{chapter}{\listtablename}
+\listoffigures\addcontentsline{toc}{chapter}{\listfigurename}
+% \listoftables\addcontentsline{toc}{chapter}{\listtablename}
 
 
 % Bibliography
@@ -89,7 +99,7 @@
 
 % Appendix
 %~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-\include{content/appendices}
+% \include{content/appendices}
 
 \nocite{*}
 
