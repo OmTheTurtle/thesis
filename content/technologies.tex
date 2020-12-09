@@ -16,14 +16,14 @@ Az egyik az egyes backend rendszerek által támogatott, szerveroldalon renderle
 Utóbbi jóval nagyobb szabadságot és funkcionalitást ad a fejlesztő kezébe, és lehetőséget ad a legújabb technikák és könyvtárak használatára.
 
 Emiatt úgy döntöttem, hogy az alkalmazás ezen részét a négy legnépszerűbb keretrendszer (React, Angular, Vue és Svelte) egyikével fogom megvalósítani.
-Ezek a keretrendszerek alapvető filozófiában és funkcionalitásban lényegében megyegyeznek, azonban az elérhető könyvtárak mennyisége és minősége a React esetében a legnagyobb, emiatt végső soron erre esett a választásom.
+Ezek a keretrendszerek alapvető filozófiában és funkcionalitásban lényegében megyegyeznek, azonban az elérhető könyvtárak mennyisége és minősége a React esetében a legnagyobb, emiatt végső soron erre esett a választásom. \cite{React}
 
 \subsection{CSS keretrendszer}
 A CSS keretrendszer kiválasztása során két fő irányvonal jött szóba: az ún. atomic CSS, illetve az előre már elkészített komponenseket kínáló könyvtárak.
 Míg előbbi lehetővé teszi a teljesen egyedi design írását, utóbbi jóval nagyobb fokú kényelmet és a felület gyorsabb elkészítését teszi lehetővé.
 
 Mivel jelen alkalmazás esetében nem volt szempont egy egyedi design elkészítése, ezért az utóbbi megoldás használata mellett döntöttem.
-A kiválasztott framework végül a Chakra UI lett, mely nagy mennyiségű kész, egyszerűen bővíthető és magas fokú accessibility-t kínáló komponensekkel rendelkezik.
+A kiválasztott framework végül a Chakra UI lett, mely nagy mennyiségű kész, egyszerűen bővíthető és magas fokú accessibility-t kínáló komponensekkel rendelkezik. \cite{ChakraUI}
 
 %----------------------------------------------------------------------------
 \section{Backend}
@@ -39,6 +39,9 @@ Ennek segítségével a React alkalmazásunkon belül készíthető egy API rét
 Ezzel lényegében megspóroljuk, hogy külön API-t és hozzávaló elérési, illetve deployment környezetet kelljen létrehozni, miközben egy Express-hez hasonló interfészt tudunk használni.
 Előnye továbbá, hogy rendkívül egyszerűvé teszi a frontend és a backend közötti kódmegosztást, csökkentve ezzel a duplikációkat és erősítve a type safety-t.
 
+A fentieken kívül a Next.js alkalmas továbbá a serverless deployment-re is. Ennek során az alkalmazást Vercel környezetben futtatva az \lstinline|src/pages/api| mappában lévő fájlokat
+automatikusan cloud function-re fordítja és futtatja, ezzel teljesen automatizálva a backend élesítését. \cite{NextJS}
+
 %----------------------------------------------------------------------------
 \section{Adatbázis}
 %----------------------------------------------------------------------------
@@ -46,7 +49,7 @@ Az adatbázis architektúra kiválasztása esetén két fő irányvonal volt a m
 
 A technológia kiválasztása során fontos szempont volt az ACID elvek követése, a relációk egyszerű kezelése és a minél nagyobb típusbiztosság elérése a backend kódjában.
 
-Ezeknek a szempontoknak a hagyományos relációs adatbázisok felelnek meg, ezen belül a PostgreSQL-re esett a választásom, mivel ez egy általam már ismert, sok funkciót támogató, inegyenes és nyílt forráskódú megoldás.
+Ezeknek a szempontoknak a hagyományos relációs adatbázisok felelnek meg, ezen belül a PostgreSQL-re esett a választásom, mivel ez egy általam már ismert, sok funkciót támogató, inegyenes és nyílt forráskódú megoldás. \cite{Postgresql}
 
 %----------------------------------------------------------------------------
 \subsection{Az adatbázis elérése}
@@ -79,7 +82,7 @@ const user = await prisma.user.create({
 })
 \end{lstlisting}
 
-A fentiek alapján a Prisma könyvtárat használtam az adatbázissal történő kommunikációra.
+A fentiek alapján a Prisma könyvtárat használtam az adatbázissal történő kommunikációra. \cite{Prisma}
 
 \section{REST és GraphQL}
 
@@ -90,20 +93,20 @@ kínál az adatok elérésére. Hátránya azonban, hogy sok extra kód és konf
 Ezzel szemben -- Next.js API routes használatával -- egy REST API végpont létrehozásához csupán a kiválasztott névvel kell egy fájlt
 helyezni az \lstinline|src/pages/api| könyvtárba.
 
-A fenti szempontokat figyelembe véve végül a hagyományos REST architektúra alkalmazása mellett döntöttem.
+A fenti szempontokat figyelembe véve végül a hagyományos REST architektúra alkalmazása mellett döntöttem. \cite{REST}
 
 \subsection{Kommunikáció megvalósítása}
 
 A HTTP kérések küldéséhez rengeteg megoldás közül tudunk válogatni.
-A legegyszerűbb a böngészőbe beépített fetch API, ami egy egyszerű interfészt biztosít, azonban funkciókat tekintve erősen korlátozott.
+A legegyszerűbb a böngészőbe beépített fetch API\cite{fetchAPI}, ami egy egyszerű interfészt biztosít, azonban funkciókat tekintve erősen korlátozott.
 
-A választásom végül a Vercel által fejlesztett SWR-re\footnote{https://swr.vercel.app/} esett. Ez egy React könyvtár, ami a stale-while-revalidate
+A választásom végül a Vercel által fejlesztett SWR-re\cite{SWR} esett. Ez egy React könyvtár, ami a stale-while-revalidate
 stratégiát alkalmazza. Segítségével könnyedén tudjuk a változtatásokat gyorsan és reaktívan követni a frontenden, miközben fejlett cache
 funkcionalitást is nyújt.
 
 \section{TypeScript}
 A frontend illetve a Node.js világában lehetőségünk van arra, hogy a JavaScript helyett egy arra lefordítható
-egyéb nyelvet használjunk fejlesztés közben. Az egyik ilyen lehetőség a TypeScript, amely egy már több éve jelenlévő,
+egyéb nyelvet használjunk fejlesztés közben. Az egyik ilyen lehetőség a TypeScript\cite{TypeScript}, amely egy már több éve jelenlévő,
 gyorsan fejlődő alternatíva többek között olyan funkciókkal, mint a static type check, type inference és magas szintű IDE
 integráció.
 
