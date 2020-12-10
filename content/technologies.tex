@@ -6,6 +6,9 @@ A technológiák kiválasztásakor fontos szempont volt a Developer Experience (
 
 Ez takarhatja például a kiterjedt és jó minőségű dokumentációt, a megfelelő IDE integrációt, vagy hogy nem kell órákat tölteni az egyes funkciók konfigurálásával.
 
+Fontos szempont volt ezen kívül az adott technológia időtállósága. Mivel a tervek szerint az alkalmazás a jövőben aktívan használva és fejlesztve
+lesz akár több fejlesztő által kulcsfontosságú volt a követhető és karbantartható kódbázis és az alkalmazás életciklusának nyomonkövethetősége.
+
 \section{Verziókezelés}
 
 A fejlesztés során fontos a változások átlátható, könnyű követése, a szoftver különböző verzóinak követése.
@@ -34,8 +37,8 @@ A kiválasztott framework végül a Chakra UI lett, mely nagy mennyiségű kész
 %----------------------------------------------------------------------------
 \section{Backend}
 %----------------------------------------------------------------------------
-A backend keretrendszer kiválasztása során a legfontosabb szempont az volt, hogy minél jobban képes legyen integrálódni a frontend keretrendszerhez.
-Mindenképpen szerettem volna elkerülni a külön repository használtatát.
+A backend keretrendszer kiválasztása során a legfontosabb szempont az volt, hogy minél jobban képes legyen integrálódni a frontend keretrendszerhez,
+emiatt mindenképpen szerettem volna elkerülni a külön repository használtatát.
 Ennek fő okai, hogy mind a fejlesztés, mind a deployment jelentősen egyszerűsödik, valamint közös könyvtár esetén a közös kódrészletek megosztása is triviálissá válik.
 
 A fentiek miatt a lehetőségeim a NodeJS alapú megoldásokra szűkítettem le. Egy népszerű, és általam már kipróbált megoldás az Express keretrendszer, azonban a React világában létezik egy, az igényeimnek méginkább megfelelő framework: a NextJS.
@@ -43,10 +46,7 @@ Ez egy React-ra épülő, SSR-t\footnote{Server-Side Rendering} támogató keret
 
 Ennek segítségével a React alkalmazásunkon belül készíthető egy API réteg, amely a fordítás után szerveroldalon futó függvényekké lesz átalakítva.
 Ezzel lényegében megspóroljuk, hogy külön API-t és hozzávaló elérési, illetve deployment környezetet kelljen létrehozni, miközben egy Express-hez hasonló interfészt tudunk használni.
-Előnye továbbá, hogy rendkívül egyszerűvé teszi a frontend és a backend közötti kódmegosztást, csökkentve ezzel a duplikációkat és erősítve a type safety-t.
-
-A fentieken kívül a Next.js alkalmas továbbá a serverless deployment-re is. Ennek során az alkalmazást Vercel környezetben futtatva az \lstinline|src/pages/api| mappában lévő fájlokat
-automatikusan cloud function-re fordítja és futtatja, ezzel teljesen automatizálva a backend élesítését. \cite{NextJS}
+Előnye továbbá, hogy rendkívül egyszerűvé teszi a frontend és a backend közötti kódmegosztást, csökkentve ezzel a duplikációkat és erősítve a type safety-t.\cite{NextJS}
 
 %----------------------------------------------------------------------------
 \section{Adatbázis}

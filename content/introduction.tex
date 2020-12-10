@@ -2,19 +2,37 @@
 \chapter{\bevezetes}
 %----------------------------------------------------------------------------
 
-A bevezető tartalmazza a diplomaterv-kiírás elemzését, történelmi előzményeit, a feladat indokoltságát (a motiváció leírását), az eddigi megoldásokat, és ennek tükrében a hallgató megoldásának összefoglalását.
-
-A bevezető szokás szerint a diplomaterv felépítésével záródik, azaz annak rövid leírásával, hogy melyik fejezet mivel foglalkozik.
-
 A Simonyi Károly Szakkollégiumban jelenleg üzemel egy könyvtár, ahonnan a hallgatók különféle tankönyveket és szórakoztató irodalmat van lehetőségük kölcsönözni.
-Ennek az adminisztrációja egy megosztott Google Docs táblázaton keresztül történik, ami azonban a publikum felé nem nyilvános, a hallgatók a könyvtárban lévő könyvek elérhetőségét csak személyesen,
-vagy az üzemeltetőknek írt emailen keresztül tudják ellenőrizni. Ez nagyban hátráltatja, hogy a hallgatókban tudatosuljon a könyvtár létezése, valamint  megnehezíti annak karbantartását és a kölcsönzés menetét is.
 
-Ezen helyzet adta a motivációt arra, hogy készítsek egy, a hallgatók által könnyen hozzáférhető, és az üzemeltetők által kényelmesen menedzselhető webes alkalmazást a szakkollégium számára.
-A cél egy reszponzív, web alapú felület tervezése és elkészítése a könyvtár könnyű használhatósága érdekében.
+A jelenlegi megoldás azonban nehézkes és nehezen fenntartható. Az adminisztráció egy megosztott Google Docs táblázaton keresztül történik. Itt ömlesztve találhatóak
+a könyvek, azoknak a darabszáma és aktuális állapota (kölcsönözhető, kiadva). Ez a táblázat továbbá nem nyilvános, tehát a végfelhasználók nem tudják ellenőrizni egy
+adott könyv elérhetőségét, illetve foglalást is csak email-en keresztül tudnak leadni.
 
-A dolgozat következő fejezeteiben bemutatom az alkalmazás tervezési és fejlesztési lépéseit.
-Ezen belül szeretnék kitérni az általam végül kiválasztott technológiák bemutatására, a kész szoftver struktúrális felépítésére,
-annak működési elvére, valamint az egyes komponensek közötti kommunikáció megvalósítására.
+Ez nagyban hátráltatja mind a könyvtár hirdetését a hallgatók számára, valamint lassúvá és bonyolulttá teszi a könyvtár menedzselését.
 
-Végül kitérek a fejlesztést segítő eszközök bemutatására, majd bemutatom a jövőbeli fejlesztési lehetőségeket.
+A fentebbi szituáció ösztönzött arra, hogy a jelenleginél optimálisabb megoldást keressek a könyvtár üzemeltetésére.
+
+Önálló laboratóriumom és szakkollégiumi tagságom során megismerkedtem több webes technológiával, különös figyelmet szentelve a manapság népszerű
+frontend technológiákra.
+
+Ennek hatására kifejezetten frondend-fókuszú megoldást szerettem volna készíteni a minél jobb felhasználói élmény érdekében. Ennek megfelelően
+a választásom a Next.js keretrendszerre és a serverless backend megoldásra esett. Mivel a kezdetektől TypeScript nyelvvel ismerkedtem meg és ezt használtam
+evidens volt, hogy a szakdolgozatomban is a TypeScript-et és az azt támogató megoldásokat részesítem előnyben. Emiatt a backend és az adatbázis kapcsolatát
+biztosító könyvtárak közül a Prisma került ki nyertesnek.
+
+A dolgozatom a továbbiakban ennek a szoftvernek a megtervezéséről és működésének bemutatásáról fog szólni.
+
+A második fejezetben a feladat által megkövetelt funkcionalitásokat. Ezek között szerepel a felhasználók kezelése, kölcsönzés leadása és
+állapotának követése, valamint a könyvek, kategóriák és kölcsönzések adminisztrátor oldalról történő menedzselése.
+
+A harmadik fejezetben bemutatom az általam az alkalmazás egyes rétegeihez használt technológiák, valamint az egyes rétegeket
+összekötő könyvtárak kiválasztási folyamatait és a végső soron kiválasztott technológiákat.
+
+A negyedik fejezet a weboldal magasszintű architektúrális felépítéséről értekezik. Bemutatom az egyes rétegek felépítését, illetve hogy
+az előző fejezetben kiválasztott könyvtárak hogyan működnek együtt az alkalmazás különböző részeivel.
+
+Az ötödik fejezet az alkalmazás által megvalósított funkciókat és az ehhez szükséges lépéseket és használt technikákat tartalmazza.
+
+A hatodik fejezetben az alkalmazás tesztelése, a kiválasztott keretrendszer bemutatása és a tesztek felépítése szerepel.
+
+Ezek után röviden összefoglalom az elkészült alkalmazást és kitérek a további fejlesztési lehetőségekre.

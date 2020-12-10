@@ -9,4 +9,24 @@
 \numberwithin{lstlisting}{section}
 %\numberwithin{tabular}{section}
 
-A program forráskódja a \href{https://OmTheTurtle/simonyi-konyvtar}{GitHub}-on. A legfrisseb build pedig megtekinthető a \href{https://simonyi-konyvtar.vercel.app}{https://simonyi-konyvtar.vercel.app} oldalon.
+\section{Telepítési útmutató}
+
+Az alkalmazás lokális futtatásához az alábbiak szükségesek:
+\begin{itemize}
+  \item Node.js 12
+  \item yarn
+  \item PostgreSQL
+  \item Amazon S3 bucket létrehozása
+\end{itemize}
+
+PostgreSQL-ben hozzunk létre egy új adatbázist, majd a hozzá tartozó connection string-et a \lstinline|prisma/.env| fájlba mint
+környezeti változó vegyük fel.
+
+Szükséges továbbá az S3-hoz tartozó környezeti változók beállítása a \lstinline|.env| fájlban, ezt az alkalmazás gyökérmappájában helyezzük el.
+Ezután a \lstinline|yarn install| parancs kiadásával tudjuk a kellő függőségeket letölteni, majd a \lstinline|yarn dev| utasítással
+tudjuk az alkalmazást futtatni.
+
+\section{Az alkalmazás elérhetősége}
+
+A program forráskódja a \href{https://OmTheTurtle/simonyi-konyvtar}{GitHub}-on megtalálható.
+A legfrisseb build pedig megtekinthető a \href{https://simonyi-konyvtar.vercel.app}{https://simonyi-konyvtar.vercel.app} oldalon.

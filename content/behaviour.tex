@@ -1,6 +1,7 @@
-\chapter{Az alkalmazás működése}
+\chapter{Az alkalmazás funkcióinak megvalósítása}
 
-TODO: bevezető a cucchoz
+Az alábbi fejezetben a weboldal korábban ismeretett követelményeinek implementációjáról, az azokhoz használt
+megoldásokról lesz szó.
 
 \section{Authentikáció}
 
@@ -206,6 +207,34 @@ return (
 )
 \end{lstlisting}
 
+\section{Kosár}
+
+A könyv részletes nézetében lehetőség van a kosárba helyezésre. Ennek a tartalmát a felső navigációs sávon lévő bevásárlókosár
+ikonra kattintva lehet megtekinteni.
+
+\begin{figure}[!ht]
+  \centering
+  \includegraphics[width=150mm, keepaspectratio]{figures/cart.png}
+  \caption{Kosár oldal}
+  \label{fig:CartPage}
+\end{figure}
+
+Itt lehetőség van az egyes könyvek darabszámának állítására, illetve a kosár tartalmának módosítására.
+
+Ezután a felhasználó ki tudja választani, hogy meddig szeretné kiválasztani a könyveket, majd a ``Foglalás leadása'' gombra kattintva
+véglegesítheti azt.
+
+A kosár adatainak tárolására a böngésző Local Storage funkcióját használtam.
+
+Ezen megoldás előnye, hogy bejelentkezés nélkül is hozzáadhatóak könyvek és egyszerűbbé teszi az adatbázisstruktúrát.
+Hátránya azonban, hogy nem kezeli a különböző böngészők (pl. asztali és mobil kliens) közötti szinkronizációt. Mivel ez utóbbi a
+követelmények kidolgozása közben nem merült fel, így az egyszerűbb megoldás alkalmazása mellett döntöttem.
+
+A kosár React-ban történő eléréséhez a \lstinline|use-persisted-state| könyvtárat vettem igénybe.
+
+Segítségével több böngészőablakon keresztül is szinkronban tartható a kosárba helyezett könyvek,
+valamint könyv hozzáadásakor illetve törlésekor automatikusan frissül minden megjelenített, kosárhoz kapcsolódó tartalom.
+
 \section{Foglalási folyamat}
 
 Az alkalmazás legfontosabb eleme a könyvek foglalásának nyomonkövetése. Az alábbi ábrán ennek a folyamatát foglaltam össze.
@@ -259,33 +288,6 @@ A fenti kódrészlet három fő utasításra bontható: létrehozza az \lstinlin
 beszúrja az \lstinline|Order| és \lstinline|Book| táblák közti kapcsolatot megteremtő kapcsolótáblába a megfelelő rekordokat,
 valamint frissíti a \lstinline|Book| táblában lévő könyvek elérhető darabszámát.
 
-\subsection{Kosár}
-
-A könyv részletes nézetében lehetőség van a kosárba helyezésre. Ennek a tartalmát a felső navigációs sávon lévő bevásárlókosár
-ikonra kattintva lehet megtekinteni.
-
-\begin{figure}[!ht]
-  \centering
-  \includegraphics[width=150mm, keepaspectratio]{figures/cart.png}
-  \caption{Kosár oldal}
-  \label{fig:CartPage}
-\end{figure}
-
-Itt lehetőség van az egyes könyvek darabszámának állítására, illetve a kosár tartalmának módosítására.
-
-Ezután a felhasználó ki tudja választani, hogy meddig szeretné kiválasztani a könyveket, majd a ``Foglalás leadása'' gombra kattintva
-véglegesítheti azt.
-
-A kosár adatainak tárolására a böngésző Local Storage funkcióját használtam.
-
-Ezen megoldás előnye, hogy bejelentkezés nélkül is hozzáadhatóak könyvek és egyszerűbbé teszi az adatbázisstruktúrát.
-Hátránya azonban, hogy nem kezeli a különböző böngészők (pl. asztali és mobil kliens) közötti szinkronizációt. Mivel ez utóbbi a
-követelmények kidolgozása közben nem merült fel, így az egyszerűbb megoldás alkalmazása mellett döntöttem.
-
-A kosár React-ban történő eléréséhez a \lstinline|use-persisted-state| könyvtárat vettem igénybe.
-
-Segítségével több böngészőablakon keresztül is szinkronban tartható a kosárba helyezett könyvek,
-valamint könyv hozzáadásakor illetve törlésekor automatikusan frissül minden megjelenített, kosárhoz kapcsolódó tartalom.
 
 \subsection{Foglalás kezelése}
 
@@ -334,22 +336,6 @@ könyv hozzáadására. A szerkesztéshez és létrehozáshoz ugyanazt a kompone
   \label{fig:BookEdit}
 \end{figure}
 
-
-\subsubsection{Fájlfeltöltés}
-
-A könyvekhez opcionálisan megadható egy borítókép, amit a felhasználó a saját gépéről választhat ki.
-
-Ennek a tárolására az Amazon S3 szolgáltatását választottam. A csatolt képet a frontend először elküldi a backendnek,
-majd az az \lstinline|aws-sdk| könyvtárat használva feltölti a képet az S3 bucket-be, az adatbázisba csak a képet
-azonosító generált kerül be. Így lehetőségünk van a képek egyszerű és adatbázisfüggetlen kezelésére.
-
-\begin{figure}[!ht]
-  \centering
-  \includegraphics[width=125mm, keepaspectratio]{figures/s3-dashboard.png}
-  \caption{Amazon S3 konzol}
-  \label{fig:S3Console}
-\end{figure}
-
 \subsection{Kategóriák kezelése}
 
 A kategóriákat egy összefoglaló oldalon lehet szerkeszteni és törölni. Egy elem eltávolítása esetén
@@ -387,7 +373,7 @@ a foglalás törlésére. Szintén itt van lehetőség minden arra jogosultnak a
 
 Ha az állapot ``Visszahozva'' státuszra módosul, a foglalás leadásához hasonlóan firssülnek a könyvhöz tartozó elérhetőségi adatok.
 
-\section{Adaptív UI}
+\section{Reszponzív UI}
 
 A felület fejelsztése közben fontos volt, hogy minden oldal megfelelően működjön mobil képernyőkön is.
 A Chakra UI szerencsére első kézből támogatja ezt a Responsive Styles funkciójának köszönhetően.

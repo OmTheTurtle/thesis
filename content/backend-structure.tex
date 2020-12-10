@@ -1,10 +1,9 @@
 \section{A backend felépítése}
 
-\subsection{Next.js API routes}
+Az alkalmazás backendje eltér a hagyományos backend API-tól. A Next.js API routes által a backendünket úgynevezett cloud function-ök alkotják.
 
-A Next.js keretrendszer a 9-es verzió óta lehetővé teszi szerveroldali kód írását az alkalmazásunkhoz.
-Ennek segítségével a \lstinline|pages/api| mappába helyetett fájljaink szolgálnak backendként. Minden ide helyezett fájl
-egyben a nevének megfelelő API végpont lesz, tehát például a \lstinline|pages/api/books.ts|-ben lévő kódot a pages/api/books URL-en keresztül tudjuk elérni.
+Ennek segítségével a \lstinline|pages/api| mappába helyezett fájljaink szolgálnak backendként. Minden ide helyezett fájl
+egyben a nevének megfelelő REST API végpont lesz, tehát például a \lstinline|pages/api/books.ts|-ben lévő kódot a \lstinline|pages/api/books| URL-en keresztül tudjuk elérni.
 
 Támogatja továbbá a backend-oldali dinamikus routing-ot, azaz például a \lstinline|pages/api/books/[id].tsx| fájl a \lstinline|pages/api/<id>| URL-nek felel meg, ahol
 az \lstinline|id| változót alábbi módon érhetjük el:
@@ -21,7 +20,7 @@ export default function handler(req, res) {
 
 \subsection{next-connect}
 Alapesetben a Next.js csak egy egyszerű interface-t biztosít nekünk, amin keresztül elérhetjük a HTTP kérés request és response objektumokat annak kezeléséhez.
-Ez azonban nezhézkessé teszi a különböző kérések feldolgozását (pl. GET, POST és PUT), valamint különbőző kódrészletek egyszerű újrafelhasználását.
+Ez azonban nehézkessé teszi a különböző kérések feldolgozását (pl. GET, POST és PUT), valamint különböző kódrészletek egyszerű újrafelhasználását.
 
 Ennek kényelmesebbé tételére döntöttem a next-connect könyvtár használata mellett, amellyel a fenti igények könnyedén megvalósíthatóak.
 Az alábbi két kódrészletben szeretném bemutatni a főbb különbségeket.
@@ -81,3 +80,161 @@ export default handler
 
 A fenti kódrészletben a POST kérés csak bejelentkezett felhasználók számára elérhető. Ezek egymás után is fűzhetőek, így komplex
 igények is rendkívül egyszerűen megvalósíthatóak.
+
+
+\subsection{Kommunikáció az adatbázissal}
+
+A backend az adatbázisból a Prisma segítségével szolgáltatja az adatokat. Ahhoz hogy ezt meg tudjuk tenni, első körben szükséges az
+adatbázisséma és a Prisma séma közötti kapcsolatot felépíteni.
+
+A séma adatbázisba történő átvezetésére két lehetőségünk van. Az egyik, hogy a dbdiagram oldalról lehetőségünk van .sql kiterjesztésű fájlt letölteni,
+ezt a létrehozott adatbázisunkon futtatni, majd a Prisma introspect funkcióját használva legenerálni hozzá a Prisma schema fájlt a backendünk számára.
+A másik, egyszerűbb megoldás a Prisma migrate\footnote{A dolgozat írása idejében ez a funkció  még experimental státuszban volt, de a használata során nem ütköztem problémákba.} használata.
+Ez esetben nekünk manuálisan kell létrehozni a Prisma schema fájlt a korábbi diagram alapján, majd a
+\begin{lstlisting}
+prisma migrate save --experimental
+prisma migrate up --experimental
+\end{lstlisting}
+
+parancsokat kiadva létrehozzuk és futtatjuk a Prisma migrációt.
+Ez utóbbi megoldás előnyei, hogy egy központi helyen tudjuk kezelni a séma változásait, valamint ezt adatbázis-agnosztikus módon
+tehetjük meg.
+
+\begin{lstlisting}[caption=Séma leírása a Prisma DSL-ben]
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Book {
+  id          Int           @id @default(autoincrement())
+  title       String
+  author      String?
+  isbn        String?
+  publisher   String?
+  publishedAt Int?
+  stockCount  Int?          @default(1)
+  count       Int?          @default(1)
+  notes       String?
+  image       String?
+  createdAt   DateTime?     @default(now())
+  updatedAt   DateTime?     @default(now())
+  orders      BookToOrder[]
+  categories  Category[]
+}
+
+model BookToOrder {
+  id       Int   @id @default(autoincrement())
+  orderId  Int
+  bookId   Int
+  quantity Int?  @default(1)
+  books    Book  @relation(fields: [bookId], references: [id])
+  orders   Order @relation(fields: [orderId], references: [id])
+
+  @@unique([bookId, orderId], name: "BookToOrder_book_order_unique")
+}
+
+model Category {
+  id    Int    @id @default(autoincrement())
+  name  String
+  books Book[]
+}
+
+model Comment {
+  id        Int       @id @default(autoincrement())
+  text      String?
+  createdAt DateTime? @default(now())
+  userId    Int
+  orderId   Int
+  order     Order     @relation(fields: [orderId], references: [id])
+  user      User      @relation(fields: [userId], references: [id])
+}
+
+model Order {
+  id         Int           @id @default(autoincrement())
+  userId     Int
+  returnDate DateTime?
+  status     orderstatus?  @default(PENDING)
+  createdAt  DateTime?     @default(now())
+  updatedAt  DateTime?     @default(now())
+  user       User          @relation(fields: [userId], references: [id])
+  books      BookToOrder[]
+  comments   Comment[]
+}
+
+model User {
+  id        Int       @id @default(autoincrement())
+  email     String    @unique
+  password  String
+  name      String?
+  createdAt DateTime? @default(now())
+  role      userrole? @default(BASIC)
+  comments  Comment[]
+  orders    Order[]
+}
+
+enum orderstatus {
+  PENDING
+  RENTED
+  RETURNED
+  LATE
+}
+
+enum userrole {
+  BASIC
+  ADMIN
+  EDITOR
+}
+\end{lstlisting}
+
+A Prisma DSL-ben a dbdiagram.io-hoz hasonló módon tudjuk felvenni a relációkat. Ennek nagy előnye, hogy a táblák közötti kapcsolatokat
+egyszerűen tudjuk modellezni, amit a \lstinline|prisma migrate| át tud vezetni az adatbázisunkba.
+
+Ahogy a fenti kódrészletben is látszik, a Category és a Book modellek közötti kapcsolatot biztosító kapcsolótábla nem jelenik
+meg a Prisma schema fájlban. Ez egy úgynevezett implicit kapcsolat, melyet a Prisma motorja automatikusan kezel és a migráció során
+létrehozza a megfelelő táblát a két entitás között.
+
+\subsection{Kapcsolódás az adatbázishoz}
+A Prisma esetében az adatbázis-kapcsolatot egy connection string segítségével tudjuk megadni, amit alapesetben
+a megadott környezeti változóból (\lstinline|DATABASE_URL|) olvas ki. Ennek nagy előnye, hogy könnyen tudunk lokális
+és remote adatbázisok között váltani, illetve egyszerűvé teszi a production-ben lévő kód és az adatbázis közötti
+kapcsolat létrehozását.
+
+\subsection{Az adatok elérése}
+
+Miután minden szükséges konfigurációt elvégeztünk, el tudjuk érni az adatainkat a Prisma Client-en keresztül.
+
+Ahhoz hogy az adatbázis-kapcsolatok számát minimalizáljuk, készítettem egy központi fájlt, ami a Prisma Clien-et exportálja.
+Ennek köszönhetően csak egy példány fog élni az alkalmazáson belül, optimalizálva ezzel annak működését.
+
+\begin{lstlisting}[caption=Prisma Client export]
+import { PrismaClient } from "@prisma/client"
+
+const prisma = new PrismaClient()
+
+export default prisma
+\end{lstlisting}
+
+Ezután az adatbázis eléréséhez elegendő ezt az egy fájlt importálni a serverless függvényünkben.
+
+\begin{lstlisting}[caption=Adatelérés next-connect middleware és Prisma segítségével]
+const handler = nextConnect<NextApiRequest, NextApiResponse>()
+
+handler
+  .use(auth())
+  .use(requireLogin())
+  .use(requireRole(userrole.ADMIN))
+  .get(async (req, res) => {
+    try {
+      const categories = await db.category.findMany()
+      res.json(categories)
+    } catch (error) {
+      console.error(error)
+      res.status(500).send(error.message)
+    }
+  })
+\end{lstlisting}
