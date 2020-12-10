@@ -11,7 +11,7 @@ lesz akár több fejlesztő által kulcsfontosságú volt a követhető és karb
 
 \section{Verziókezelés}
 
-A fejlesztés során fontos a változások átlátható, könnyű követése, a szoftver különböző verzóinak követése.
+A fejlesztés során fontos a változások átlátható, könnyű követése, a szoftver különböző verzióinak követése.
 
 Erre a mára már kvázi ipari sztenderdnek számító \lstinline|git| nevű szoftvert vettem igénybe. A forráskód felhőben
 történő tárolására a GitHub szolgáltatását használtam.
@@ -25,7 +25,7 @@ Az egyik az egyes backend rendszerek által támogatott, szerveroldalon renderle
 Utóbbi jóval nagyobb szabadságot és funkcionalitást ad a fejlesztő kezébe, és lehetőséget ad a legújabb technikák és könyvtárak használatára.
 
 Emiatt úgy döntöttem, hogy az alkalmazás ezen részét a négy legnépszerűbb keretrendszer (React, Angular, Vue és Svelte) egyikével fogom megvalósítani.
-Ezek a keretrendszerek alapvető filozófiában és funkcionalitásban lényegében megyegyeznek, azonban az elérhető könyvtárak mennyisége és minősége a React esetében a legnagyobb, emiatt végső soron erre esett a választásom. \cite{React}
+Ezek a keretrendszerek alapvető filozófiában és funkcionalitásban lényegében megegyeznek, azonban az elérhető könyvtárak mennyisége és minősége a React esetében a legnagyobb, emiatt végső soron erre esett a választásom. \cite{React}
 
 \subsection{CSS keretrendszer}
 A CSS keretrendszer kiválasztása során két fő irányvonal jött szóba: az ún. atomic CSS, illetve az előre már elkészített komponenseket kínáló könyvtárak.
@@ -38,7 +38,7 @@ A kiválasztott framework végül a Chakra UI lett, mely nagy mennyiségű kész
 \section{Backend}
 %----------------------------------------------------------------------------
 A backend keretrendszer kiválasztása során a legfontosabb szempont az volt, hogy minél jobban képes legyen integrálódni a frontend keretrendszerhez,
-emiatt mindenképpen szerettem volna elkerülni a külön repository használtatát.
+emiatt mindenképpen szerettem volna elkerülni a külön repository használatát.
 Ennek fő okai, hogy mind a fejlesztés, mind a deployment jelentősen egyszerűsödik, valamint közös könyvtár esetén a közös kódrészletek megosztása is triviálissá válik.
 
 A fentiek miatt a lehetőségeim a NodeJS alapú megoldásokra szűkítettem le. Egy népszerű, és általam már kipróbált megoldás az Express keretrendszer, azonban a React világában létezik egy, az igényeimnek méginkább megfelelő framework: a NextJS.
@@ -55,7 +55,7 @@ Az adatbázis architektúra kiválasztása esetén két fő irányvonal volt a m
 
 A technológia kiválasztása során fontos szempont volt az ACID elvek követése, a relációk egyszerű kezelése és a minél nagyobb típusbiztosság elérése a backend kódjában.
 
-Ezeknek a szempontoknak a hagyományos relációs adatbázisok felelnek meg, ezen belül a PostgreSQL-re esett a választásom, mivel ez egy általam már ismert, sok funkciót támogató, inegyenes és nyílt forráskódú megoldás. \cite{Postgresql}
+Ezeknek a szempontoknak a hagyományos relációs adatbázisok felelnek meg, ezen belül a PostgreSQL-re esett a választásom, mivel ez egy általam már ismert, sok funkciót támogató, ingyenes és nyílt forráskódú megoldás. \cite{Postgresql}
 
 %----------------------------------------------------------------------------
 \subsection{Az adatbázis elérése}
@@ -66,7 +66,7 @@ NodeJS környezetben rendkívül nagy választék áll rendelkezésre, ezeket k�
 Míg az előbbi megoldás egy erős absztrakciós réteget képez az adatbázis szerkezete és a programkód között, addig a query builder egy, az SQL-hez közelebbi interfészt kínál a felhasználónak.
 Ez utóbbi előnye, hogy a felhasználó által írt kód közelebb van a végső soron lefutó SQL-hez, így átláthatóbbak az egyes lekérések végeredményei.
 
-A query builder megoldások közül is kiemelkedik a Prisma, amely egy NodeJS környezetben működő adatbázis kliens, ami a hansúlyt a type safety-re helyezi.
+A query builder megoldások közül is kiemelkedik a Prisma, amely egy NodeJS környezetben működő adatbázis kliens, ami a hangsúlyt a type safety-re helyezi.
 Az adatbázis sémát egy speciális \lstinline|.prisma| kiterjesztésű fájlban tudjuk megírni, majd ezt a Prisma migrációs eszközével tudjuk az adatbázisunkba átvezetni.
 Ezután lehetőségünk van a séma alapján a sémából TypeScript típusokat generálni, melyek használata nagyban megkönnyíti és felgyorsítja a fejlesztés menetét.
 
@@ -116,5 +116,5 @@ egyéb nyelvet használjunk fejlesztés közben. Az egyik ilyen lehetőség a Ty
 gyorsan fejlődő alternatíva többek között olyan funkciókkal, mint a static type check, type inference és magas szintű IDE
 integráció.
 
-Az általam választott technológiák közül a Prisma kifezezetten épít a TypeScript nyújtotta előnyökre, illetve a Next.js
+Az általam választott technológiák közül a Prisma kifejezetten épít a TypeScript nyújtotta előnyökre, illetve a Next.js
 integrációhoz elegendő egy konfigurációs fájlt létrehozni, így evidens volt, hogy az alkalmazást TypeScript segítségével írjam meg.

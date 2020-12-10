@@ -1,17 +1,17 @@
 \chapter{Az alkalmazás funkcióinak megvalósítása}
 
-Az alábbi fejezetben a weboldal korábban ismeretett követelményeinek implementációjáról, az azokhoz használt
+Az alábbi fejezetben a weboldal korábban ismertetett követelményeinek implementációjáról, az azokhoz használt
 megoldásokról lesz szó.
 
 \section{Authentikáció}
 
 A felhasználók magukat egy email-jelszó párossal tudják azonosítani, melyet regisztrációkor adhatnak meg.
 
-A regisztráció kezelésénék két dologra kellett figyelmet fordítanom: egy email cím csak egyszer szerepelhessen
+A regisztráció kezelésének két dologra kellett figyelmet fordítanom: egy email cím csak egyszer szerepelhessen
 az adatbázisban, valamint a jelszót megfelelő módon tároljuk az adatbázisban.
 
 Az első kritériumra megoldásként szolgál az adatbázisban az email mező egyedivé tétele, valamint a regisztráció során
-a megadott emailcím ellenőrzése.
+a megadott email cím ellenőrzése.
 
 A jelszó biztonságos tárolása érdekében azt regisztráció során hash-elve mentem el az adatbázisba, erre az \lstinline|argon2| könyvtárat
 használtam fel.
@@ -21,7 +21,7 @@ használtam fel.
 A session kezeléshez a \lstinline|passport| könyvtárat és cookie alapú megoldást használtam. Ennek során a felhasználót a böngészőben
 tárolt cookie információ azonosítja, amit backenden ellenőrzi tudunk.
 
-A frontenden történő ellenőrzéshez egy hook-ot készítettem, ennek segítségével ellenőrzhető, hogy a felhasználó be van-e jelentkezve.
+A frontenden történő ellenőrzéshez egy hook-ot készítettem, ennek segítségével ellenőrizhető, hogy a felhasználó be van-e jelentkezve.
 
 \begin{lstlisting}[caption=Authentikáció hook]
 export function useUser() {
@@ -35,20 +35,20 @@ export function useUser() {
 \section{Authorizáció}
 
 Az alkalmazás megfelelő használata érdekében szükséges volt bizonyos funkciók elérésének szűkítésére. Ehhez a role-based access control
-megoldást választottam, mely alapján a felhasználókat különböző kategórákba tudjuk besorolni, majd ezeknek a kategóriáknak adunk jogosultságokat.
+megoldást választottam, mely alapján a felhasználókat különböző kategóriákba tudjuk besorolni, majd ezeknek a kategóriáknak adunk jogosultságokat.
 
 Ennek megfelelően három jogosultság-kategóriát hoztam létre: \lstinline|BASIC|, \lstinline|ADMIN| és \lstinline|EDITOR|.
 
 A \lstinline|BASIC| felhasználók képesek foglalást leadni és a sajátjaikhoz megjegyzést fűzni, valamint a hozzájuk tartozó foglalásokat listázni.
 
-Az \lstinline|EDITOR| jogosultsággal rendelkezők ezen felül képesek az egyes foglalások állapotát állítani, valamint bármyely foglaláshoz
+Az \lstinline|EDITOR| jogosultsággal rendelkezők ezen felül képesek az egyes foglalások állapotát állítani, valamint bármely foglaláshoz
 megjegyzést fűzni.
 
 Az \lstinline|ADMIN| joggal rendelkezők a fentieken kívül képesek könyvek és kategóriák hozzáadására, törlésére és szerkesztésére.
 
 \subsection{Megvalósítás}
 
-A kódbázison belül a frontenden és backendes is szükséges elleőrizni a megfelelő jogosultságokat.
+A kódbázison belül a frontenden és backenden is szükséges ellenőrizni a megfelelő jogosultságokat.
 
 A backenden ehhez létrehoztam egy middleware-t, amely a már bejelentkezett emberek jogosultságát ellenőrzi.
 \begin{lstlisting}[caption=Authorizáció middleware]
@@ -103,12 +103,12 @@ export default function HasRole({ roles, children }: Props) {
 </HasRole>
 \end{lstlisting}
 
-A fenti módszerek alkalmazásásval egy robosztus jogosultság-kezelő megoldást sikerült implementálnom a szoftverbe.
+A fenti módszerek alkalmazásával egy robusztus jogosultság-kezelő megoldást sikerült implementálnom a szoftverbe.
 
 \section{Könyvek listázása}
 
 A kezdőoldalon az elérhető könyveket tudjuk listázni egy rácsszerkezetben.
-Itt látható a könyvöz kapcsolt borítókép, a könyv címe, szerzője és kategóriái.
+Itt látható a könyvhöz kapcsolt borítókép, a könyv címe, szerzője és kategóriái.
 
 \begin{figure}[!ht]
   \centering
@@ -133,7 +133,7 @@ lehetőségünk van a könyv kosárba helyezésére (feltéve, hogy van belőle 
 
 A főoldalon tudunk a meglévő könyvek közötti kulcsszavas keresésre. Ezt a PostgreSQL Full Text Search funkciójával implementáltam.
 
-Ehhez szükséges volt létrehozni az indexeléshez szükséges oszlopot a \lstinline|Book| táblán, ami alapján az adatbázismotor a kersést
+Ehhez szükséges volt létrehozni az indexeléshez szükséges oszlopot a \lstinline|Book| táblán, ami alapján az adatbázismotor a keresést
 el tudja végezni.
 
 \begin{lstlisting}[caption=A kereséshez szükséges SQL utasítások]
@@ -190,7 +190,7 @@ const books = await db.$queryRaw(sql)
 \end{lstlisting}
 
 Alapesetben ha elkezdünk a keresőmezőbe gépelni, a frontend minden egyes leütés után kérést intéz a backend felé.
-Ez azonban felesleges forgalmat és adatbáziselérést okoz, ezért az input késleltetésére a \lstinline|use-debounce| pagckage-et használtam.
+Ez azonban felesleges forgalmat és adatbázis-elérést okoz, ezért az input késleltetésére a \lstinline|use-debounce| pagckage-et használtam.
 
 \begin{lstlisting}[caption=A keresést megvalósító kódrészlet a frontenden]
 const [term, setTerm] = useState("")
@@ -226,7 +226,7 @@ véglegesítheti azt.
 
 A kosár adatainak tárolására a böngésző Local Storage funkcióját használtam.
 
-Ezen megoldás előnye, hogy bejelentkezés nélkül is hozzáadhatóak könyvek és egyszerűbbé teszi az adatbázisstruktúrát.
+Ezen megoldás előnye, hogy bejelentkezés nélkül is hozzáadhatóak könyvek és egyszerűbbé teszi az adatbázis-struktúrát.
 Hátránya azonban, hogy nem kezeli a különböző böngészők (pl. asztali és mobil kliens) közötti szinkronizációt. Mivel ez utóbbi a
 követelmények kidolgozása közben nem merült fel, így az egyszerűbb megoldás alkalmazása mellett döntöttem.
 
@@ -250,7 +250,7 @@ Egy foglalás leadása esetén a könyvből elérhető darabszámot is frissíte
 viszont az inkonzisztencia elkerülése érdekében ennek teljesítenie kell az ACID elveket.
 
 Mivel a Prisma jelenleg nem támogatja ilyen komplex módosítások egy utasításban történő végrehajtását, annak Transaction API
-funkcióját használtam. Ennek segítségével több, egymástól független adatbázismódosítást lehet egyetlen tranzakcióba csomagolni,
+funkcióját használtam. Ennek segítségével több, egymástól független adatbázis-módosítást lehet egyetlen tranzakcióba csomagolni,
 így vagy minden kívánt módosítás érvényesül, vagy egyik sem.
 
 \begin{lstlisting}[caption=Transaction API használata kölcsönzés létrehozásakor]
@@ -339,7 +339,7 @@ könyv hozzáadására. A szerkesztéshez és létrehozáshoz ugyanazt a kompone
 \subsection{Kategóriák kezelése}
 
 A kategóriákat egy összefoglaló oldalon lehet szerkeszteni és törölni. Egy elem eltávolítása esetén
-minden hozzá kapcsolódó könyből is törlődik az adott kategória. Szerkesztés esetén egy felugró párbeszédablakban lehet
+minden hozzá kapcsolódó könnyből is törlődik az adott kategória. Szerkesztés esetén egy felugró párbeszédablakban lehet
 megadni az új nevet.
 
 \begin{figure}[!ht]
@@ -371,11 +371,11 @@ a foglalás törlésére. Szintén itt van lehetőség minden arra jogosultnak a
   \label{fig:OrderAdminDetail}
 \end{figure}
 
-Ha az állapot ``Visszahozva'' státuszra módosul, a foglalás leadásához hasonlóan firssülnek a könyvhöz tartozó elérhetőségi adatok.
+Ha az állapot ``Visszahozva'' státuszra módosul, a foglalás leadásához hasonlóan frissülnek a könyvhöz tartozó elérhetőségi adatok.
 
 \section{Reszponzív UI}
 
-A felület fejelsztése közben fontos volt, hogy minden oldal megfelelően működjön mobil képernyőkön is.
+A felület fejlesztése közben fontos volt, hogy minden oldal megfelelően működjön mobil képernyőkön is.
 A Chakra UI szerencsére első kézből támogatja ezt a Responsive Styles funkciójának köszönhetően.
 
 Ennek segítségével egy Chakra komponens tulajdonságait egy tömbben tudjuk megadni, ahol minden elem egy adott képernyőmérethez

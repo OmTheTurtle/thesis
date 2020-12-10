@@ -20,11 +20,11 @@ felépítésésről valamint az egyes rétegek összeköttetéséről foglalkozi
 
 \section{Képfeltöltés}
 
-A könyvekhez lehetősév van borítóképet feltölteni, ezeket azonban valahol tárolni is kell.
+A könyvekhez lehetőség van borítóképet feltölteni, ezeket azonban valahol tárolni is kell.
 
 Ennek a tárolására az Amazon S3 szolgáltatását választottam. A csatolt képet a frontend először elküldi a backendnek,
 majd az az \lstinline|aws-sdk| könyvtárat használva feltölti a képet az S3 bucket-be, az adatbázisba csak a képet
-azonosító generált kerül be. Így lehetőségünk van a képek egyszerű és adatbázisfüggetlen kezelésére.
+azonosító generált kerül be. Így lehetőségünk van a képek egyszerű és adatbázis-független kezelésére.
 
 \begin{figure}[!ht]
   \centering

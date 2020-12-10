@@ -6,7 +6,7 @@ repetitív és nagy hibalehetőséggel jár.
 
 Mivel az itt bemutatott szoftver monolitikus, külön a frontendet és backendet nem tartottam célszerűnek tesztelni.
 
-Emiatt az alkalmazáshoz end-to-end (röviden e2e) teszteket írtam, ami a szofver egészét veszi górcső alá, így akár komplex folyamatok
+Emiatt az alkalmazáshoz end-to-end (röviden e2e) teszteket írtam, ami a szoftver egészét veszi górcső alá, így akár komplex folyamatok
 szimulálását is lehetővé teszi.
 
 A következő lépés a megfelelő tesztelési keretrendszer kiválasztása. Az e2e tesztek futtatásához szükség van egy test runner környezetre, egy assertion library-re, valamint egy böngésző emulátorra.
@@ -41,7 +41,7 @@ describe("Login flow", () => {
 \end{lstlisting}
 
 A tesztek futtatásához először is futnia kell az alkalmazásunknak. Ezután a \lstinline|cypress open| parancs kiadásával
-tudjuk megnyitni a futtatókörnyezetet. Itt akár egyesével, akár egymás után tudjuk indítani a tesztjeinket.
+tudjuk megnyitni a futtatókörnyezetet. Itt akár egyesével, akár egymás után sorban tudjuk indítani a tesztjeinket.
 
 \begin{figure}[!ht]
   \centering
