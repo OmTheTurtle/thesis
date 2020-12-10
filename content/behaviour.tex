@@ -1,5 +1,7 @@
 \chapter{Az alkalmazás működése}
 
+TODO: bevezető a cucchoz
+
 \section{Authentikáció}
 
 A felhasználók magukat egy email-jelszó párossal tudják azonosítani, melyet regisztrációkor adhatnak meg.
@@ -18,7 +20,7 @@ használtam fel.
 A session kezeléshez a \lstinline|passport| könyvtárat és cookie alapú megoldást használtam. Ennek során a felhasználót a böngészőben
 tárolt cookie információ azonosítja, amit backenden ellenőrzi tudunk.
 
-A frontenden történő ellenőrzéshez egy hook-ot készítettem, mellyel ellenőrzhető, hogy a felhasználó be van-e jelentkezve.
+A frontenden történő ellenőrzéshez egy hook-ot készítettem, ennek segítségével ellenőrzhető, hogy a felhasználó be van-e jelentkezve.
 
 \begin{lstlisting}[caption=Authentikáció hook]
 export function useUser() {

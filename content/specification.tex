@@ -1,9 +1,13 @@
 \chapter{Specifikáció}
 
+Az alábbi fejezet az alkalmazás alapvető működéséhez szükséges funkciókkal foglalkozik. Ezeknek korai lefektetése
+és tisztázása fontos, hogy az implementáció során ne essünk overengineering\cite{Overengineering} vagy a hibásan implementált funkcionalitás csapdájába.
+
 \section{Felhasználókezelés}
 
-Az alkalmazásra legyen lehetőség regisztrálni, illetve a regisztrált felhasználóknak bejelentkezni.
+Az alkalmazásra legyen lehetőség regisztrálni, illetve a regisztrált felhasználóknak bejelentkezni, valamint a már bejelentkezett felhasználóknak kijelentkezni.
 A regisztráció során a név, email cím és jelszó megadása kötelező, egy email címmel csak egy fiók hozható létre.
+Bejelentkezni a név és email cím megadásával lehet.
 
 \section{Könyvek listázása}
 
@@ -13,16 +17,17 @@ egy kiválasztott könyv részletes nézetét.
 \section{Kosár}
 
 A könyveket a webshopokban megszokott módon kosárba helyezhetünk (egy könyvből akár többet, de maximum az elérhető mennyiségnek megfelelőt).
-A kosár tartalmát lehetőségünk van listázni, a benne lévő elemeket és darabszámukat szerkeszteni.
+A kosár tartalmát lehetőségünk van listázni, a benne lévő elemeket szerkeszteni (darabszámot növelni és csökkenteni, könyvet eltávolítani, vagy a teljes kosarat kiüríteni).
 
 \section{Kölcsönzés kezelése}
 
 A kosárba helyezett könyveket le tudjuk adni a visszavitel időpontjának megadásával, ekkor a kölcsönzés ``Függőben'' állapotba kerül.
 
-Ezután a kölcsönzés oldalán az alkalmazás adminisztrátoraival lehetőség van átvételi időpont egyeztetésére.
+Ezután a kölcsönzés oldalán az alkalmazás adminisztrátoraival lehetőség van átvételi időpont egyeztetésére a kölcsönzéshez fűzhető kommenteken keresztül.
+A kölcsönzést illetve a hozzá tartozó kommenteket csak az kölcsönző, illetve megfelelő jogosultsággal rendelkező adminisztrátor láthatja
 
 \section{Admin funkcionalitás}
 
-Az alkalmazás adminjainak lehetősége van könyvek iletve kategóriák hozzáadására, szerkesztésére és törlésére.
+Az alkalmazás adminjainak lehetősége van könyvek illetve kategóriák hozzáadására, szerkesztésére és törlésére.
 
 Ezen kívül frissíthetik a kölcsönzés állapotát, törölhetik azt, valamint hozzászólást fűzhetnek a kölcsönzésekhez.
