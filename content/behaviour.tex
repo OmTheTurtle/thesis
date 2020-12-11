@@ -18,10 +18,75 @@ használtam fel.
 
 \subsection{Megvalósítás}
 
-A session kezeléshez a \lstinline|passport| könyvtárat és cookie alapú megoldást használtam. Ennek során a felhasználót a böngészőben
-tárolt cookie információ azonosítja, amit backenden ellenőrzi tudunk.
+A bejelenkezésre, illetve regisztrációra a megfelelő oldalakon van lehetőség, amik között a közvetlen átjárást linkek biztosítják.
 
-A frontenden történő ellenőrzéshez egy hook-ot készítettem, ennek segítségével ellenőrizhető, hogy a felhasználó be van-e jelentkezve.
+\begin{figure}[!ht]
+  \centering
+  \includegraphics[width=150mm, keepaspectratio]{figures/login-screen.png}
+  \caption{Bejelentkező oldal}
+  \label{fig:LoginPage}
+\end{figure}
+
+\begin{figure}[!ht]
+  \centering
+  \includegraphics[width=150mm, keepaspectratio]{figures/register-screen.png}
+  \caption{Bejelentkező oldal}
+  \label{fig:RegisterPage}
+\end{figure}
+
+Az alábbi kódrészlet bemutatja a felhasználó bejelnetkezési folyamatát a backenden.
+
+\begin{lstlisting}[caption=Felhasználó létrehozása]
+handler
+.use(auth())
+.post(async (req, res) => {
+  const { email, name, password } = req.body
+  const isValid = UserSchema.isValid(req.body)
+  if (!isValid) {
+    return res.status(400).json({ message: "Nem megfelelő formátum" })
+  }
+  const u = await db.user.findUnique({ where: { email } })
+  if (u) {
+    return res.status(406).json({ message: "A megadott email már foglalt" })
+  }
+  const hashedPass = await argon2.hash(password)
+  const user = { name, password: hashedPass, email }
+
+  let createdUser: User
+  try {
+    createdUser = await db.user.create({
+      data: { ...user }
+    })
+    req.logIn(createdUser, (err) => {
+      if (err) throw err
+      // Log the signed up user in
+      const
+      res.status(201).json({
+        user,
+      })
+    })
+  } catch (err) {
+    console.error(err)
+    res.status(500).json({ message: "Sikertelen regisztráció" })
+  }
+})
+\end{lstlisting}
+
+Első körben ellenőrizzük, hogy már létezik-e az email cím, és ha igen, hibával visszatérünk. Ezután hash-eljük a jelszót, majd
+ha sikeres az adatbázisban történő létrehozás, bejelentkeztetjük az új felhasználót és visszatérünk az adataival.
+
+Fontos, hogy érzékeny adatokat (jelen esetben jelszó) ne adjunk vissza a backend oldaláról, még akkor sem ha titkosítva van.
+
+\subsubsection{Session kezelése}
+
+A session kezeléshez a \lstinline|passport| könyvtárat és cookie alapú megoldást használtam. Ennek során a felhasználót a böngészőben
+tárolt cookie információ azonosítja, amit minden kérés során elküld a szervernek, így azt backenden ellenőrzi tudjuk.
+
+Biztonsági szempontból fontos a cookie megfelelő védelme. Ehhez egyrész production környezetben \lstinline|secure| és \lstinline|httpOnly| bállítást használtam,
+másrészt a \lstinline|@hapi/iron| package-et használva titkosítottam a tartalmát.
+
+A frontenden történő ellenőrzéshez egy hook-ot készítettem, ennek segítségével ellenőrizhető, hogy a felhasználó be van-e jelentkezve,
+illetve lekérhetőek a felhasználóhoz tartozó információk.
 
 \begin{lstlisting}[caption=Authentikáció hook]
 export function useUser() {
@@ -105,6 +170,18 @@ export default function HasRole({ roles, children }: Props) {
 
 A fenti módszerek alkalmazásával egy robusztus jogosultság-kezelő megoldást sikerült implementálnom a szoftverbe.
 
+\section{Profilom oldal}
+
+Bejelentkezés illetve regisztráció után lehetőség van bizonyos, a felhasználóhoz köthető adatok módosítására. Az ehhez tartozó oldalt a fent megjelenő ``Profilom''
+linkre kattintva tudjuk megjeleníteni. Itt a név és jelszó megváltoztatására van lehetőség, az email cím nem módosítható.
+
+\begin{figure}[!ht]
+  \centering
+  \includegraphics[width=150mm, keepaspectratio]{figures/profile-page.png}
+  \caption{Profilom oldal}
+  \label{fig:ProfilePage}
+\end{figure}
+
 \section{Könyvek listázása}
 
 A kezdőoldalon az elérhető könyveket tudjuk listázni egy rácsszerkezetben.
@@ -116,6 +193,69 @@ Itt látható a könyvhöz kapcsolt borítókép, a könyv címe, szerzője és 
   \caption{Az alkalmazás kezdőlapja}
   \label{fig:IndexPage}
 \end{figure}
+
+A navigációt segítendő, ha egy könyv fölé húzzuk az egeret, megjelenik körülötte egy sötétszükre árnyék áttűnéssel animálva.
+
+Ennek megvalósításához a \lstinline|framer-motion| könyvtárat használtam, ami könnyedén integrálható a Chakra UI csomaggal.
+Segítségével akár komplex animációk is létrehozhatóak React alkalmazásunkban kevés kód felhasználásával.
+
+\begin{lstlisting}[caption=framer-motion és Chakra UI együttes használata]
+import { Box, Stack, Heading, Tag, Text, Wrap, WrapItem, chakra } from "@chakra-ui/react"
+import { motion } from "framer-motion"
+import NextImage from "next/image"
+import NextLink from "next/link"
+
+import { BookWithCategories } from "lib/interfaces"
+
+const MotionBox = chakra(motion.div)
+
+interface BookPreviewProps {
+  book: BookWithCategories
+}
+
+export const BookPreview = ({ book }: BookPreviewProps) => {
+  return (
+    <NextLink href="/books/[id]" as={`/books/${book.id}`}>
+      <MotionBox
+        p={4}
+        rounded="md"
+        cursor="pointer"
+        whileHover={{
+          boxShadow: "0px 0px 8px lightgray",
+        }}
+        maxW="xs"
+      >
+        <Box pr={2}>
+          <NextImage
+            width={150}
+            height={225}
+            src={
+              book.image
+                ? `${process.env.NEXT_PUBLIC_S3_URL}/${book.image}`
+                : "https://via.placeholder.com/150x225"
+            }
+          />
+        </Box>
+        <Stack direction="column" spacing={2}>
+          <Heading as="h3" size="md">
+            {book.title}
+          </Heading>
+          <Text size="sm">{book.author}</Text>
+          <Text>{book.stockCount || 0} db elérhető</Text>
+        </Stack>
+        <Wrap mt={2}>
+          {book.categories?.map((it) => (
+            <WrapItem key={it.id}>
+              <Tag>{it.name}</Tag>
+            </WrapItem>
+          ))}
+        </Wrap>
+      </MotionBox>
+    </NextLink>
+  )
+}
+
+\end{lstlisting}
 
 \subsection{Részletes nézet}
 
@@ -230,10 +370,111 @@ Ezen megoldás előnye, hogy bejelentkezés nélkül is hozzáadhatóak könyvek
 Hátránya azonban, hogy nem kezeli a különböző böngészők (pl. asztali és mobil kliens) közötti szinkronizációt. Mivel ez utóbbi a
 követelmények kidolgozása közben nem merült fel, így az egyszerűbb megoldás alkalmazása mellett döntöttem.
 
-A kosár React-ban történő eléréséhez a \lstinline|use-persisted-state| könyvtárat vettem igénybe.
+A kosárhoz az alábbi interfészpáros tartozik. A kosár tárolja az összes benne lévő könyv darabszámát a könnyű lekérdezés érdekében,
+valamint az egyes könyvek legfontosabb információit.
+
+\begin{lstlisting}[caption=Kosárhoz tartozó TypeScript interfészek]
+// src/lib/interfaces.ts
+export interface Cart {
+  sumCount: number
+  books: CartItem[]
+}
+
+export interface CartItem {
+  id: number
+  quantity: number
+  title: string
+  author: string
+}
+\end{lstlisting}
+
+A kosár React-ban történő eléréséhez a \lstinline|use-persisted-state|\cite{PersistedState} könyvtárat vettem igénybe.
 
 Segítségével több böngészőablakon keresztül is szinkronban tartható a kosárba helyezett könyvek,
 valamint könyv hozzáadásakor illetve törlésekor automatikusan frissül minden megjelenített, kosárhoz kapcsolódó tartalom.
+
+A \lstinline|useCart| hook öt elemet foglal magában. Tárolja a kosár teljes tartalmát, valamint négy függvényt, amelyekkel ezen tartalmat módosítani lehet.
+Utóbbiakban több helyen is validációt alkalmaztam, hogy a kosár tartalma mindig konzisztens maradjon.
+
+\begin{lstlisting}[caption=Kosár megvalósítása use-persisted-state segítségével]
+import createPersistedState from "use-persisted-state"
+const useCartState = createPersistedState("cart")
+
+export const useCart = (initialState: Cart = { sumCount: 0, books: [] }) => {
+  const [cart, setCart] = useCartState<Cart>(initialState)
+
+  return {
+    cart: cart,
+    addBook: (book: CartItem) => {
+      if (cart.books.length) {
+        const cartBook = cart.books.find((it) => it.id === book.id)
+        if (cartBook) {
+          setCart({
+            sumCount: cart.sumCount + 1,
+            books: cart.books.map((it) =>
+              it.id === book.id ? { ...it, quantity: it.quantity + 1 } : it,
+            ),
+          })
+        } else {
+          setCart({ sumCount: cart.sumCount + 1, books: [...cart.books, book] })
+        }
+      } else {
+        setCart({ sumCount: 1, books: [book] })
+      }
+    },
+    removeBook: (book: CartItem) => {
+      if (!cart.books.length) return
+      const cartBook = cart.books.find((it) => it.id === book.id)
+      if (!cartBook) return
+      if (cartBook.quantity > 1) {
+        setCart({
+          sumCount: cart.sumCount - 1,
+          books: cart.books.map((it) =>
+            it.id === book.id ? { ...it, quantity: it.quantity - 1 } : it,
+          ),
+        })
+      }
+    },
+    deleteBook: (book: CartItem) => {
+      const cartBook = cart.books.find((it) => it.id === book.id)
+      if (!cartBook) return
+      setCart({
+        sumCount: cart.sumCount - cartBook.quantity,
+        books: cart.books.filter((it) => it.id !== book.id),
+      })
+    },
+    emptyCart: () => {
+      setCart({
+        sumCount: 0,
+        books: [],
+      })
+    },
+  }
+}
+\end{lstlisting}
+
+A kosár oldal esetében egy, az SSR miatt jelentkező problémát is ki kellett küszöbölnöm. Mivel az oldal
+használ olyan API-t, ami csak böngészőben érhető el, ezért ha szerveroldalon rendereljük, az hibákhoz és inkonzisztenciához vezethet.
+
+A Next.js szerencsére lehetőséget biztosít arra, hogy egy adott oldalt teljes mértékben kliensoldalon rendereljünk ki, így megoldva ezt
+a problémát. Az alábbi kódrészlet ennek az implementálását szemlélteti.
+
+\begin{lstlisting}[caption=Kliensen renderelt Next.js oldal]
+import dynamic from "next/dynamic"
+// ohter imports
+
+function CartPage() {
+  // page logic
+
+  return (
+    <>
+      {/* page content */}
+    </>
+  )
+}
+
+export default dynamic(() => Promise.resolve(CartPage), { ssr: false })
+\end{lstlisting}
 
 \section{Foglalási folyamat}
 
@@ -439,4 +680,27 @@ export const BookSchema = yup.object().shape({
   notes: yup.string(),
   image: yup.string(),
 })
+\end{lstlisting}
+
+
+\section{Töltőképernyő}
+
+Előfordulhat, hogy bár az oldal HTML tartalma betöltött, azonban az adat hozzá még nem érkezett meg.
+Ilyen esetben nem szerencsés a felhasználót üres oldallal fogadni, ezért készítettem egy Loading komponenst, amit
+a még be nem töltött adat helyett tudunk megjeleníteni.
+
+\begin{lstlisting}[caption=Töltőképernyő komponens]
+import { Center, Flex, Spinner, Text } from "@chakra-ui/react"
+
+export function Loading() {
+  return (
+    <Center>
+      <Flex direction="column" alignItems="center" justifyContent="center">
+        <Spinner size="xl" color="green.500"></Spinner>
+        <Text mt={2}>Betöltés...</Text>
+      </Flex>
+    </Center>
+  )
+}
+
 \end{lstlisting}

@@ -11,14 +11,15 @@ szimulálását is lehetővé teszi.
 
 A következő lépés a megfelelő tesztelési keretrendszer kiválasztása. Az e2e tesztek futtatásához szükség van egy test runner környezetre, egy assertion library-re, valamint egy böngésző emulátorra.
 
-Ezekre a követelményekre sok, egymástól független megoldás létezik, azonban ezek konfigurációja és összekötése nehézkes lehet.
-Emiatt döntöttem végül a \lstinline|cypress| könyvtár használata mellett, mely a fent említett funkciókat egyetlen szoftverként
+Ezekre a követelményekre sok, egymástól független megoldás létezik, azonban ezek konfigurációja és összekötése esetenként nehézkes és bonyolult lehet.
+Emiatt döntöttem végül a \lstinline|cypress|\cite{Cypress} könyvtár használata mellett, mely a fent említett funkciókat egyetlen szoftverként
 tudja biztosítani.
+
+Az alábbi kódrészlet bemutatja a \lstinline|cypress| használatát a bejelentkezés tesztelésére.
 
 \begin{lstlisting}[caption=Bejelentkezés tesztelése]
 describe("Login flow", () => {
   it("sets auth cookie when logging in via form submission", () => {
-    // destructuring assignment of the this.currentUser object
     const user = {
       email: "john@doe.com",
       password: "asdfghjkl",
@@ -31,7 +32,7 @@ describe("Login flow", () => {
     // {enter} causes the form to submit
     cy.get("input[name=password]").type(`${user.password}{enter}`)
 
-    // we should be redirected to /dashboard
+    // we should be redirected to /
     cy.url().should("include", "/")
 
     // our auth cookie should be present

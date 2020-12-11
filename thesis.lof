@@ -5,24 +5,28 @@
 \select@language {magyar} \addvspace {10\p@ }
 \select@language {magyar} \contentsline {figure}{\numberline {4.1.}{\ignorespaces Az alkalmazás high-level architektúrája\relax }}{8}{figure.caption.5}%
 \select@language {magyar} \contentsline {figure}{\numberline {4.2.}{\ignorespaces Az adatbázisséma ER diagramja.\relax }}{9}{figure.caption.6}%
-\select@language {magyar} \contentsline {figure}{\numberline {4.3.}{\ignorespaces Amazon S3 konzol\relax }}{13}{figure.caption.7}%
+\select@language {magyar} \contentsline {figure}{\numberline {4.3.}{\ignorespaces Next.js link prefetch\relax }}{14}{figure.caption.7}%
+\select@language {magyar} \contentsline {figure}{\numberline {4.4.}{\ignorespaces Amazon S3 konzol\relax }}{17}{figure.caption.8}%
 \select@language {magyar} \addvspace {10\p@ }
-\select@language {magyar} \contentsline {figure}{\numberline {5.1.}{\ignorespaces Az alkalmazás kezdőlapja\relax }}{16}{figure.caption.8}%
-\select@language {magyar} \contentsline {figure}{\numberline {5.2.}{\ignorespaces Könyv részletes nézete\relax }}{17}{figure.caption.9}%
-\select@language {magyar} \contentsline {figure}{\numberline {5.3.}{\ignorespaces Kosár oldal\relax }}{18}{figure.caption.10}%
-\select@language {magyar} \contentsline {figure}{\numberline {5.4.}{\ignorespaces Rendelés leadásának menete\relax }}{19}{figure.caption.11}%
-\select@language {magyar} \contentsline {figure}{\numberline {5.5.}{\ignorespaces Kölcsönzések listázása\relax }}{20}{figure.caption.12}%
-\select@language {magyar} \contentsline {figure}{\numberline {5.6.}{\ignorespaces Kölcsönzés részletei kommentekkel\relax }}{21}{figure.caption.13}%
-\select@language {magyar} \contentsline {figure}{\numberline {5.7.}{\ignorespaces Könyvek listája az admin panelen\relax }}{21}{figure.caption.14}%
-\select@language {magyar} \contentsline {figure}{\numberline {5.8.}{\ignorespaces Könyv adatainak szerkesztése\relax }}{22}{figure.caption.15}%
-\select@language {magyar} \contentsline {figure}{\numberline {5.9.}{\ignorespaces Kategóriák kezelése oldal\relax }}{23}{figure.caption.16}%
-\select@language {magyar} \contentsline {figure}{\numberline {5.10.}{\ignorespaces Összes foglalás listázása az adminok számára\relax }}{24}{figure.caption.17}%
-\select@language {magyar} \contentsline {figure}{\numberline {5.11.}{\ignorespaces Foglalás részletes nézete az adminok számára\relax }}{25}{figure.caption.18}%
-\select@language {magyar} \contentsline {figure}{\numberline {5.12.}{\ignorespaces Kosár oldal mobil képernyőn, nyitott menüvel\relax }}{26}{figure.caption.19}%
-\select@language {magyar} \contentsline {figure}{\numberline {5.13.}{\ignorespaces Sötét téma\relax }}{26}{figure.caption.20}%
+\select@language {magyar} \contentsline {figure}{\numberline {5.1.}{\ignorespaces Bejelentkező oldal\relax }}{18}{figure.caption.9}%
+\select@language {magyar} \contentsline {figure}{\numberline {5.2.}{\ignorespaces Bejelentkező oldal\relax }}{19}{figure.caption.10}%
+\select@language {magyar} \contentsline {figure}{\numberline {5.3.}{\ignorespaces Profilom oldal\relax }}{21}{figure.caption.11}%
+\select@language {magyar} \contentsline {figure}{\numberline {5.4.}{\ignorespaces Az alkalmazás kezdőlapja\relax }}{22}{figure.caption.12}%
+\select@language {magyar} \contentsline {figure}{\numberline {5.5.}{\ignorespaces Könyv részletes nézete\relax }}{23}{figure.caption.13}%
+\select@language {magyar} \contentsline {figure}{\numberline {5.6.}{\ignorespaces Kosár oldal\relax }}{25}{figure.caption.14}%
+\select@language {magyar} \contentsline {figure}{\numberline {5.7.}{\ignorespaces Rendelés leadásának menete\relax }}{27}{figure.caption.15}%
+\select@language {magyar} \contentsline {figure}{\numberline {5.8.}{\ignorespaces Kölcsönzések listázása\relax }}{29}{figure.caption.16}%
+\select@language {magyar} \contentsline {figure}{\numberline {5.9.}{\ignorespaces Kölcsönzés részletei kommentekkel\relax }}{30}{figure.caption.17}%
+\select@language {magyar} \contentsline {figure}{\numberline {5.10.}{\ignorespaces Könyvek listája az admin panelen\relax }}{30}{figure.caption.18}%
+\select@language {magyar} \contentsline {figure}{\numberline {5.11.}{\ignorespaces Könyv adatainak szerkesztése\relax }}{31}{figure.caption.19}%
+\select@language {magyar} \contentsline {figure}{\numberline {5.12.}{\ignorespaces Kategóriák kezelése oldal\relax }}{32}{figure.caption.20}%
+\select@language {magyar} \contentsline {figure}{\numberline {5.13.}{\ignorespaces Összes foglalás listázása az adminok számára\relax }}{33}{figure.caption.21}%
+\select@language {magyar} \contentsline {figure}{\numberline {5.14.}{\ignorespaces Foglalás részletes nézete az adminok számára\relax }}{34}{figure.caption.22}%
+\select@language {magyar} \contentsline {figure}{\numberline {5.15.}{\ignorespaces Kosár oldal mobil képernyőn, nyitott menüvel\relax }}{35}{figure.caption.23}%
+\select@language {magyar} \contentsline {figure}{\numberline {5.16.}{\ignorespaces Sötét téma\relax }}{35}{figure.caption.24}%
 \select@language {magyar} \addvspace {10\p@ }
-\select@language {magyar} \contentsline {figure}{\numberline {6.1.}{\ignorespaces Tesztek futtatása Cypress segítségével\relax }}{28}{figure.caption.21}%
+\select@language {magyar} \contentsline {figure}{\numberline {6.1.}{\ignorespaces Tesztek futtatása Cypress segítségével\relax }}{37}{figure.caption.25}%
 \select@language {magyar} \addvspace {10\p@ }
-\select@language {magyar} \contentsline {figure}{\numberline {7.1.}{\ignorespaces A Prisma Stuio felülete\relax }}{30}{figure.caption.22}%
-\select@language {magyar} \contentsline {figure}{\numberline {7.2.}{\ignorespaces Dependabot által nyitott Pull Request\relax }}{30}{figure.caption.23}%
+\select@language {magyar} \contentsline {figure}{\numberline {7.1.}{\ignorespaces A Prisma Stuio felülete\relax }}{39}{figure.caption.26}%
+\select@language {magyar} \contentsline {figure}{\numberline {7.2.}{\ignorespaces Dependabot által nyitott Pull Request\relax }}{39}{figure.caption.27}%
 \select@language {magyar} \addvspace {10\p@ }
